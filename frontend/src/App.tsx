@@ -1,5 +1,11 @@
 import CourtTable from "./components/courtTable";
 
 export default function App() {
-  return <CourtTable />;
+  return (
+    <>
+      <h1>Courtly</h1>
+
+      <CourtTable />
+    </>
+  )
 }
