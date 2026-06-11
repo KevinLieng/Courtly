@@ -39,10 +39,20 @@ export default function LocationRow({
 
   const availabilityByTime = slots.reduce((acc, slot) => {
     if (!slot.available) return acc;
-
     acc[slot.time] = (acc[slot.time] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
+
+  const handleClick = (time: string) => {
+    const baseUrl =
+      locationId === 6
+        ? `https://jensenstennis.intrac.com.au/tennis/book.cfm?location=${locationId}&date=${date}&court=283`
+        : `https://jensenstennis.intrac.com.au/tennis/book.cfm?location=${locationId}&date=${date}`;
+
+    const url = `${baseUrl}`;
+
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <div
@@ -73,23 +83,31 @@ export default function LocationRow({
       >
         {times.map((time) => {
           const count = availabilityByTime[time] || 0;
+          const isAvailable = count > 0;
 
           return (
             <div
               key={time}
-              title={`${time}: ${count} courts available`}
+              title={
+                isAvailable
+                  ? `${time}: ${count} courts available (click to book)`
+                  : `${time}: unavailable`
+              }
+              onClick={() => isAvailable && handleClick(time)}
               style={{
                 height: "50px",
-                backgroundColor: count > 0 ? "#22c55e" : "#e5e7eb",
+                backgroundColor: isAvailable ? "#22c55e" : "#e5e7eb",
                 borderRadius: "6px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 fontWeight: 600,
-                color: count > 0 ? "white" : "#999",
+                color: isAvailable ? "white" : "#999",
+                cursor: isAvailable ? "pointer" : "default",
+                userSelect: "none",
               }}
             >
-              {count > 0 ? count : ""}
+              {isAvailable ? count : ""}
             </div>
           );
         })}
