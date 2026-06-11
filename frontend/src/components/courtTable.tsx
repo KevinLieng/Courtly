@@ -20,7 +20,8 @@ export default function CourtAvailability() {
 
   const times = Array.from(
     { length: 16 },
-    (_, i) => `${String(i + 7).padStart(2, "0")}`
+
+    (_, i) => `${String(i + 7).padStart(2, "0")}:00`
   );
 
   const nextSevenDays = Array.from({ length: 7 }, (_, i) => {

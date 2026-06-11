@@ -8,11 +8,11 @@ export type AvailabilitySlot = {
 };
 
 export async function getAvailability(location: number, date: string) {
-  const url = `https://jensenstennis.intrac.com.au/tennis/book.cfm?location=${location}&date=${date}`;
+  let url = `https://jensenstennis.intrac.com.au/tennis/book.cfm?location=${location}&date=${date}`;
 
   // rosebery court has hotshot courts so just take the full size court
   if (location == 6) {
-    const url = `https://jensenstennis.intrac.com.au/tennis/book.cfm?location=${location}&date=${date}&court=283`;
+    url = `https://jensenstennis.intrac.com.au/tennis/book.cfm?location=${location}&date=${date}&court=283`;
   }
 
   const response = await axios.get(url, {
@@ -40,11 +40,8 @@ export async function getAvailability(location: number, date: string) {
 
     if (!match) return;
 
-
-    const court = Number(match[3]);
-
     slots.push({
-      court: court === 227 ? 5 : court,
+      court: Number(match[3]),
       time: match[2],
       available: true,
     });
