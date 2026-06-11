@@ -65,6 +65,8 @@ export default function CourtAvailability() {
             key={d.value}
             onClick={() => setDate(d.value)}
             style={{
+              width: "120px",
+              height: "42px",
               padding: "10px 14px",
               borderRadius: "8px",
               border: "1px solid #ccc",
@@ -72,6 +74,9 @@ export default function CourtAvailability() {
               backgroundColor: date === d.value ? "#2563eb" : "#fff",
               color: date === d.value ? "#fff" : "#000",
               fontWeight: date === d.value ? "600" : "400",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             {d.label}

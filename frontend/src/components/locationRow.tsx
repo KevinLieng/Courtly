@@ -66,7 +66,7 @@ export default function LocationRow({
     >
       <div
         style={{
-          textAlign: "right",
+          textAlign: "left",
           fontWeight: 600,
           whiteSpace: "nowrap",
         }}
@@ -87,28 +87,57 @@ export default function LocationRow({
 
           return (
             <div
-              key={time}
-              title={
-                isAvailable
-                  ? `${time}: ${count} courts available (click to book)`
-                  : `${time}: unavailable`
-              }
-              onClick={() => isAvailable && handleClick(time)}
-              style={{
-                height: "50px",
-                backgroundColor: isAvailable ? "#22c55e" : "#e5e7eb",
-                borderRadius: "6px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: 600,
-                color: isAvailable ? "white" : "#999",
-                cursor: isAvailable ? "pointer" : "default",
-                userSelect: "none",
-              }}
-            >
-              {isAvailable ? count : ""}
-            </div>
+                key={time}
+                title={
+                    isAvailable
+                    ? `${time}: ${count} courts available (click to book)`
+                    : `${time}: unavailable`
+                }
+                onClick={() => isAvailable && handleClick(time)}
+                onMouseEnter={(e) => {
+                    if (!isAvailable) return;
+                    e.currentTarget.style.transform = "scale(1.08)";
+                    e.currentTarget.style.boxShadow = "0 8px 20px rgba(34,197,94,0.35)";
+                    e.currentTarget.style.filter = "brightness(1.05)";
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "scale(1)";
+                    e.currentTarget.style.boxShadow = "none";
+                    e.currentTarget.style.filter = "none";
+                }}
+                onMouseDown={(e) => {
+                    if (!isAvailable) return;
+                    e.currentTarget.style.transform = "scale(0.96)";
+                }}
+                onMouseUp={(e) => {
+                    if (!isAvailable) return;
+                    e.currentTarget.style.transform = "scale(1.08)";
+                }}
+                style={{
+                    height: "50px",
+                    borderRadius: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: 600,
+                    fontSize: "13px",
+                    userSelect: "none",
+                    cursor: isAvailable ? "pointer" : "default",
+                    color: isAvailable ? "white" : "#9ca3af",
+
+                    backgroundColor: isAvailable
+                    ? count === 1
+                        ? "#22c55e"
+                        : count === 2
+                        ? "#16a34a"
+                        : "#15803d"
+                    : "#e5e7eb",
+
+                    transition: "all 0.15s ease",
+                }}
+                >
+                {isAvailable ? count : ""}
+                </div>
           );
         })}
       </div>
