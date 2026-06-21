@@ -256,6 +256,8 @@ export default function CourtAvailability() {
                   fontSize: "16px",
                   whiteSpace: "nowrap",
                   color: "#94a3b8",
+                  paddingLeft: "14px",
+                  boxSizing: "border-box",
                 }}
               >
                 {row.name}
