@@ -7,7 +7,22 @@ export type AvailabilitySlot = {
   available: boolean;
 };
 
-export async function getAvailability(location: number, date: string) {
+export type AvailabilityResponse = {
+  status: "ok" | "invalid-date";
+  slots: AvailabilitySlot[];
+};
+
+function formatDateForPage(date: string) {
+  const [year, month, day] = date.split("-").map(Number);
+
+  return new Date(year, month - 1, day).toLocaleDateString("en-AU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+export async function getAvailability(location: number, date: string): Promise<AvailabilityResponse> {
   let url = `https://jensenstennis.intrac.com.au/tennis/book.cfm?location=${location}&date=${date}`;
 
   // rosebery court has hotshot courts so just take the full size court
@@ -28,6 +43,16 @@ export async function getAvailability(location: number, date: string) {
   
   const $ = cheerio.load(response.data);
 
+  const expectedPageDate = formatDateForPage(date);
+  const pageText = $("body").text().replace(/\s+/g, " ").trim();
+
+  if (!pageText.includes(expectedPageDate)) {
+    return {
+      status: "invalid-date",
+      slots: [],
+    };
+  }
+
   const slots: AvailabilitySlot[] = [];
 
   $("a[href*='reserve.cfm']").each((_, el) => {
@@ -39,6 +64,7 @@ export async function getAvailability(location: number, date: string) {
     );
 
     if (!match) return;
+    if (match[1] !== date) return;
 
     slots.push({
       court: Number(match[3]),
@@ -47,5 +73,8 @@ export async function getAvailability(location: number, date: string) {
     });
   });
   console.log(slots)
-  return slots;
+  return {
+    status: "ok",
+    slots,
+  };
 }

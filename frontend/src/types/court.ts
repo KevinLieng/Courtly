@@ -1,18 +1,27 @@
-export type Court = {
-  id: string;
-  name: string;
-  suburb: string;
-  bookingUrl: string;
-};
-
-export type Availability = {
-  courtId: string;
-  date: string;
-  slots: { time: string; available: boolean }[];
-};
+import axios from "axios";
 
 export type Slot = {
   court: number;
   time: string;
   available: boolean;
 };
+
+export type AvailabilityResponse = {
+  status: "ok" | "invalid-date";
+  slots: Slot[];
+};
+
+const api = axios.create({
+  baseURL: "http://localhost:3000",
+});
+
+export async function getAvailability(
+  location: number,
+  date: string
+): Promise<AvailabilityResponse> {
+  const res = await api.get<AvailabilityResponse>("/api/availability", {
+    params: { location, date },
+  });
+
+  return res.data;
+}
