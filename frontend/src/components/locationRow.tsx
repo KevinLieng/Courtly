@@ -98,7 +98,7 @@ export default function LocationRow({
                   : count === 2
                   ? "#16a34a"
                   : "#15803d"
-                : "#e5e7eb",
+                : "#2B2F36",
 
               transition: "all 0.15s ease",
             }}

@@ -130,7 +130,7 @@ export default function CourtAvailability() {
   return (
     <div
       style={{
-        padding: "2rem",
+        padding: "1rem 2rem 2rem",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -147,31 +147,35 @@ export default function CourtAvailability() {
         }}
       >
         {nextSevenDays.map((d) => (
-          <button
-            key={d.value}
-            onClick={() => setDate(d.value)}
-            style={{
-              width: "120px",
-              height: "42px",
-              padding: "10px 14px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              cursor: "pointer",
-              backgroundColor: date === d.value ? "#2563eb" : "#fff",
-              color: date === d.value ? "#fff" : "#000",
-              fontWeight: date === d.value ? 600 : 400,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {d.label}
-          </button>
+        <button
+          key={d.value}
+          onClick={() => setDate(d.value)}
+          style={{
+            width: "120px",
+            height: "42px",
+            padding: "10px 14px",
+            borderRadius: "8px",
+            border: date === d.value ? "1px solid #5B8CFF" : "1px solid #3A3F46",
+            cursor: "pointer",
+            backgroundColor: date === d.value ? "#2563EB" : "#2B2F36",
+            color: date === d.value ? "#FFFFFF" : "#D7DEE8",
+            fontWeight: date === d.value ? 600 : 500,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow:
+              date === d.value
+                ? "0 0 0 1px rgba(37, 99, 235, 0.25)"
+                : "none",
+          }}
+        >
+          {d.label}
+        </button>
         ))}
       </div>
 
       {/* Date picker */}
-      <div style={{ marginBottom: "24px" }}>
+      <div style={{ marginBottom: "0px" }}>
         <input
           type="date"
           value={date}
@@ -242,7 +246,7 @@ export default function CourtAvailability() {
         <div
           style={{
             width: "min(98vw, 1600px)",
-            marginTop: "36px",
+            marginTop: "24px",
             display: "grid",
             gridTemplateColumns: `${LABEL_WIDTH} minmax(0, 1fr)`,
             columnGap: "8px",
