@@ -33,14 +33,24 @@ const BLOCK_GAP = "4px";
 // Mobile will scroll once it gets smaller than this.
 const TIME_GRID_MIN_WIDTH = "1040px";
 
+// helper for date
+function getLocalDateString(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
 export default function CourtAvailability() {
-  const today = new Date().toISOString().split("T")[0];
+  const today = getLocalDateString();
 
   const maxDate = new Date();
   maxDate.setDate(maxDate.getDate() + 30);
-  const maxDateString = maxDate.toISOString().split("T")[0];
+  const maxDateString = getLocalDateString(maxDate);
 
-  const [date, setDate] = useState(today);
+  const [date, setDate] = useState(() => getLocalDateString());
+
   const [rows, setRows] = useState<LoadedLocation[]>([]);
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -50,7 +60,7 @@ export default function CourtAvailability() {
     d.setDate(d.getDate() + i);
 
     return {
-      value: d.toISOString().split("T")[0],
+      value: getLocalDateString(d),
       label:
         i === 0
           ? "Today"
