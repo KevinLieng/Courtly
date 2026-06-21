@@ -24,14 +24,14 @@ const times = Array.from(
   (_, i) => `${String(i + 7).padStart(2, "0")}:00`
 );
 
-const LABEL_WIDTH = "190px";
-const ROW_HEIGHT = "58px";
-const ROW_GAP = "12px";
+const LABEL_WIDTH = "125px";
+const ROW_HEIGHT = "54px";
+const ROW_GAP = "10px";
 const BLOCK_GAP = "4px";
 
 // Desktop will stretch nicely.
 // Mobile will scroll once it gets smaller than this.
-const TIME_GRID_MIN_WIDTH = "1180px";
+const TIME_GRID_MIN_WIDTH = "1040px";
 
 export default function CourtAvailability() {
   const today = new Date().toISOString().split("T")[0];
@@ -231,11 +231,11 @@ export default function CourtAvailability() {
       {!loading && rows.length > 0 && (
         <div
           style={{
-            width: "min(96vw, 1500px)",
+            width: "min(98vw, 1600px)",
             marginTop: "36px",
             display: "grid",
             gridTemplateColumns: `${LABEL_WIDTH} minmax(0, 1fr)`,
-            columnGap: "16px",
+            columnGap: "8px",
             alignItems: "start",
           }}
         >
@@ -253,7 +253,7 @@ export default function CourtAvailability() {
                   display: "flex",
                   alignItems: "center",
                   fontWeight: 700,
-                  fontSize: "20px",
+                  fontSize: "16px",
                   whiteSpace: "nowrap",
                   color: "#94a3b8",
                 }}
