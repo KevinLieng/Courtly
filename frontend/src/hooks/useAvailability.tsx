@@ -1,33 +1,56 @@
 import { useEffect, useState } from "react";
-import { getAvailability, type Slot } from "../api/courts";
+import {
+  getAvailability,
+  type LocationAvailability,
+} from "../api/courts";
 
-export type AvailabilityStatus = "idle" | "loading" | "ok" | "invalid-date" | "error";
+export type AvailabilityStatus =
+  | "idle"
+  | "loading"
+  | "ok"
+  | "invalid-date"
+  | "error";
 
-export function useAvailability(location: number, date: string) {
-  const [slots, setSlots] = useState<Slot[]>([]);
+export function useAvailability(date: string) {
+  const [locations, setLocations] = useState<LocationAvailability[]>([]);
   const [status, setStatus] = useState<AvailabilityStatus>("idle");
 
   useEffect(() => {
-    if (!location || !date) return;
+    if (!date) return;
 
     let cancelled = false;
 
-    setSlots([]);
+    setLocations([]);
     setStatus("loading");
 
     const timer = setTimeout(async () => {
       try {
-        const data = await getAvailability(location, date);
+        const data = await getAvailability(date);
 
         if (cancelled) return;
 
-        setSlots(data.slots);
-        setStatus(data.status);
+        setLocations(data.locations);
+
+        const hasError = data.locations.some(
+          (location) => location.status === "error"
+        );
+
+        const hasInvalidDate = data.locations.some(
+          (location) => location.status === "invalid-date"
+        );
+
+        if (hasInvalidDate) {
+          setStatus("invalid-date");
+        } else if (hasError) {
+          setStatus("error");
+        } else {
+          setStatus("ok");
+        }
       } catch (err) {
         console.error("Failed to get availability:", err);
 
         if (!cancelled) {
-          setSlots([]);
+          setLocations([]);
           setStatus("error");
         }
       }
@@ -37,10 +60,10 @@ export function useAvailability(location: number, date: string) {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [location, date]);
+  }, [date]);
 
   return {
-    slots,
+    locations,
     loading: status === "loading",
     invalidDate: status === "invalid-date",
     error: status === "error",

@@ -1,23 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import LocationRow from "./locationRow";
-import { getAvailability, type Slot } from "../api/courts";
-
-type Location = {
-  id: number;
-  name: string;
-};
-
-type LoadedLocation = Location & {
-  slots: Slot[];
-};
-
-const locations: Location[] = [
-  { id: 2, name: "Surry Hills" },
-  { id: 3, name: "Alexandria" },
-  { id: 4, name: "Beaconsfield" },
-  { id: 5, name: "Glebe" },
-  { id: 6, name: "Rosebery" },
-];
+import { useAvailability } from "../hooks/useAvailability";
 
 const times = Array.from(
   { length: 16 },
@@ -29,11 +12,8 @@ const ROW_HEIGHT = "54px";
 const ROW_GAP = "10px";
 const BLOCK_GAP = "4px";
 
-// Desktop will stretch nicely.
-// Mobile will scroll once it gets smaller than this.
 const TIME_GRID_MIN_WIDTH = "1040px";
 
-// helper for date
 function getLocalDateString(date = new Date()) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -51,9 +31,14 @@ export default function CourtAvailability() {
 
   const [date, setDate] = useState(() => getLocalDateString());
 
-  const [rows, setRows] = useState<LoadedLocation[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  const { locations, loading, invalidDate, error, status } =
+    useAvailability(date);
+
+  const loaded = status !== "idle" && status !== "loading";
+
+  const visibleLocations = locations.filter((location) =>
+    location.slots.some((slot) => slot.available)
+  );
 
   const nextSevenDays = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
@@ -71,61 +56,6 @@ export default function CourtAvailability() {
             }),
     };
   });
-
-  useEffect(() => {
-    if (!date) return;
-
-    let cancelled = false;
-
-    setRows([]);
-    setLoaded(false);
-    setLoading(true);
-
-    const timer = setTimeout(async () => {
-      try {
-        const results = await Promise.all(
-          locations.map(async (location) => {
-            const data = await getAvailability(location.id, date);
-
-            return {
-              ...location,
-              status: data.status,
-              slots: data.slots,
-            };
-          })
-        );
-
-        if (cancelled) return;
-
-        const visibleRows: LoadedLocation[] = results
-          .filter((row) => row.status === "ok")
-          .map((row) => ({
-            id: row.id,
-            name: row.name,
-            slots: row.slots,
-          }));
-
-        setRows(visibleRows);
-        setLoaded(true);
-      } catch (err) {
-        console.error("Failed to load availability:", err);
-
-        if (!cancelled) {
-          setRows([]);
-          setLoaded(true);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    }, 2000);
-
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-    };
-  }, [date]);
 
   return (
     <div
@@ -147,30 +77,33 @@ export default function CourtAvailability() {
         }}
       >
         {nextSevenDays.map((d) => (
-        <button
-          key={d.value}
-          onClick={() => setDate(d.value)}
-          style={{
-            width: "120px",
-            height: "42px",
-            padding: "10px 14px",
-            borderRadius: "8px",
-            border: date === d.value ? "1px solid #5B8CFF" : "1px solid #3A3F46",
-            cursor: "pointer",
-            backgroundColor: date === d.value ? "#2563EB" : "#2B2F36",
-            color: date === d.value ? "#FFFFFF" : "#D7DEE8",
-            fontWeight: date === d.value ? 600 : 500,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow:
-              date === d.value
-                ? "0 0 0 1px rgba(37, 99, 235, 0.25)"
-                : "none",
-          }}
-        >
-          {d.label}
-        </button>
+          <button
+            key={d.value}
+            onClick={() => setDate(d.value)}
+            style={{
+              width: "120px",
+              height: "42px",
+              padding: "10px 14px",
+              borderRadius: "8px",
+              border:
+                date === d.value
+                  ? "1px solid #5B8CFF"
+                  : "1px solid #3A3F46",
+              cursor: "pointer",
+              backgroundColor: date === d.value ? "#2563EB" : "#2B2F36",
+              color: date === d.value ? "#FFFFFF" : "#D7DEE8",
+              fontWeight: date === d.value ? 600 : 500,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow:
+                date === d.value
+                  ? "0 0 0 1px rgba(37, 99, 235, 0.25)"
+                  : "none",
+            }}
+          >
+            {d.label}
+          </button>
         ))}
       </div>
 
@@ -228,7 +161,7 @@ export default function CourtAvailability() {
         </div>
       )}
 
-      {!loading && loaded && rows.length === 0 && (
+      {!loading && invalidDate && (
         <div
           style={{
             marginTop: "48px",
@@ -242,7 +175,35 @@ export default function CourtAvailability() {
         </div>
       )}
 
-      {!loading && rows.length > 0 && (
+      {!loading && error && (
+        <div
+          style={{
+            marginTop: "48px",
+            textAlign: "center",
+            color: "#f87171",
+            fontWeight: 700,
+            fontSize: "18px",
+          }}
+        >
+          Failed to load availability.
+        </div>
+      )}
+
+      {!loading && loaded && !invalidDate && !error && visibleLocations.length === 0 && (
+        <div
+          style={{
+            marginTop: "48px",
+            textAlign: "center",
+            color: "#94a3b8",
+            fontWeight: 700,
+            fontSize: "18px",
+          }}
+        >
+          No courts available for this date.
+        </div>
+      )}
+
+      {!loading && visibleLocations.length > 0 && (
         <div
           style={{
             width: "min(98vw, 1600px)",
@@ -255,12 +216,11 @@ export default function CourtAvailability() {
         >
           {/* Fixed left location names */}
           <div>
-            {/* Spacer for time header */}
             <div style={{ height: "24px", marginBottom: "8px" }} />
 
-            {rows.map((row) => (
+            {visibleLocations.map((visibleLocations) => (
               <div
-                key={row.id}
+                key={visibleLocations.id}
                 style={{
                   height: ROW_HEIGHT,
                   marginBottom: ROW_GAP,
@@ -274,7 +234,7 @@ export default function CourtAvailability() {
                   boxSizing: "border-box",
                 }}
               >
-                {row.name}
+                {visibleLocations.name}
               </div>
             ))}
           </div>
@@ -310,12 +270,12 @@ export default function CourtAvailability() {
                 ))}
               </div>
 
-              {rows.map((row) => (
+              {visibleLocations.map((visibleLocations) => (
                 <LocationRow
-                  key={row.id}
-                  locationId={row.id}
+                  key={visibleLocations.id}
+                  locationId={visibleLocations.id}
                   date={date}
-                  slots={row.slots}
+                  slots={visibleLocations.slots}
                   times={times}
                   rowHeight={ROW_HEIGHT}
                   rowGap={ROW_GAP}

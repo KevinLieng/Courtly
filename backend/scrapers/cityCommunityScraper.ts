@@ -1,16 +1,7 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 
-export type AvailabilitySlot = {
-  court: number;
-  time: string;
-  available: boolean;
-};
-
-export type AvailabilityResponse = {
-  status: "ok" | "invalid-date";
-  slots: AvailabilitySlot[];
-};
+import { AvailabilityResponse, AvailabilitySlot } from "./slotTypes";
 
 function formatDateForPage(date: string) {
   const [year, month, day] = date.split("-").map(Number);
@@ -22,7 +13,7 @@ function formatDateForPage(date: string) {
   });
 }
 
-export async function getAvailability(location: number, date: string): Promise<AvailabilityResponse> {
+export async function cityCommunityScraper(location: number, date: string): Promise<AvailabilityResponse> {
   let url = `https://jensenstennis.intrac.com.au/tennis/book.cfm?location=${location}&date=${date}`;
 
   // rosebery court has hotshot courts so just take the full size court
@@ -70,6 +61,7 @@ export async function getAvailability(location: number, date: string): Promise<A
       court: Number(match[3]),
       time: match[2],
       available: true,
+      bookingUrl: url,
     });
   });
   console.log(slots)

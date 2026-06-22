@@ -1,7 +1,7 @@
 import type { Slot } from "../api/courts";
 
 type Props = {
-  locationId: number;
+  locationId: string;
   date: string;
   slots: Slot[];
   times: string[];
@@ -22,21 +22,30 @@ export default function LocationRow({
   const availabilityByTime = slots.reduce((acc, slot) => {
     if (!slot.available) return acc;
 
-    acc[slot.time] = (acc[slot.time] || 0) + 1;
+    if (!acc[slot.time]) {
+      acc[slot.time] = {
+        count: 0,
+        bookingUrl: slot.bookingUrl,
+      };
+    }
+
+    acc[slot.time].count += 1;
+
     return acc;
-  }, {} as Record<string, number>);
+  }, {} as Record<string, { count: number; bookingUrl: string }>);
 
-  const handleClick = () => {
-    const url =
-      locationId === 6
-        ? `https://jensenstennis.intrac.com.au/tennis/book.cfm?location=${locationId}&date=${date}&court=283`
-        : `https://jensenstennis.intrac.com.au/tennis/book.cfm?location=${locationId}&date=${date}`;
+  const handleClick = (time: string) => {
+    const availability = availabilityByTime[time];
 
-    window.open(url, "_blank", "noopener,noreferrer");
+    if (!availability) return;
+
+    window.open(availability.bookingUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
     <div
+      data-location-id={locationId}
+      data-date={date}
       style={{
         display: "grid",
         gridTemplateColumns: `repeat(${times.length}, minmax(0, 1fr))`,
@@ -45,7 +54,8 @@ export default function LocationRow({
       }}
     >
       {times.map((time) => {
-        const count = availabilityByTime[time] || 0;
+        const availability = availabilityByTime[time];
+        const count = availability?.count || 0;
         const isAvailable = count > 0;
 
         return (
@@ -57,14 +67,12 @@ export default function LocationRow({
                 : `${time}: no courts available`
             }
             onClick={() => {
-              if (isAvailable) handleClick();
+              if (isAvailable) handleClick(time);
             }}
             onMouseEnter={(e) => {
               if (!isAvailable) return;
 
               e.currentTarget.style.transform = "scale(1.08)";
-              e.currentTarget.style.boxShadow =
-                "0 8px 20px rgba(34,197,94,0.35)";
               e.currentTarget.style.filter = "brightness(1.05)";
             }}
             onMouseLeave={(e) => {
@@ -74,10 +82,12 @@ export default function LocationRow({
             }}
             onMouseDown={(e) => {
               if (!isAvailable) return;
+
               e.currentTarget.style.transform = "scale(0.96)";
             }}
             onMouseUp={(e) => {
               if (!isAvailable) return;
+
               e.currentTarget.style.transform = "scale(1.08)";
             }}
             style={{
