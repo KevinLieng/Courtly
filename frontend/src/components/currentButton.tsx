@@ -60,7 +60,7 @@ export default function CurrentLocationButton({
           color: "#D7DEE8",
           fontWeight: 600,
           opacity: loading ? 0.7 : 1,
-          marginTop: "12px",
+          marginTop: "13px",
         }}
       >
         {loading ? "Getting location..." : "Use current location"}
