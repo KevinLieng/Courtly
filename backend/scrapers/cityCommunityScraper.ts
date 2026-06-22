@@ -64,7 +64,6 @@ export async function cityCommunityScraper(location: number, date: string): Prom
       bookingUrl: url,
     });
   });
-  console.log(slots)
   return {
     status: "ok",
     slots,

@@ -1,7 +1,8 @@
 import { cityCommunityScraper } from "./cityCommunityScraper";
+import { parklandsScraper } from "./parklandsScraper";
 import type { AvailabilityResponse } from "./slotTypes";
 
-type Provider = "city-community";
+type Provider = "city-community" | "parklands";
 
 type LocationConfig = {
   id: string; // your app's clean ID
@@ -54,6 +55,19 @@ const locations: LocationConfig[] = [
     provider: "city-community",
     providerLocationId: 6,
   },
+  {
+    id: "centennial-park",
+    name: "Centennial Park ",
+    provider: "parklands",
+    providerLocationId: 55,
+  },
+  {
+    id: "moore-park",
+    name: "Moore Park ",
+    provider: "parklands",
+    providerLocationId: 72,
+  },
+  
 ];
 
 async function scrapeLocation(
@@ -63,6 +77,18 @@ async function scrapeLocation(
   try {
     if (location.provider === "city-community") {
       const data = await cityCommunityScraper(location.providerLocationId, date);
+
+      return {
+        id: location.id,
+        name: location.name,
+        provider: location.provider,
+        status: data.status,
+        slots: data.slots,
+      };
+    }
+
+    if (location.provider === "parklands") {
+      const data = await parklandsScraper(location.providerLocationId, date);
 
       return {
         id: location.id,
