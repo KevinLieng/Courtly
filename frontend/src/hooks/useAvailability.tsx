@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   getAvailability,
   type LocationAvailability,
-} from "../api/courts";
+} from "../api/courtsApi";
 
 export type AvailabilityStatus =
   | "idle"

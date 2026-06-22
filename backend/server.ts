@@ -14,14 +14,19 @@ app.get("/api/availability", async (req: Request, res: Response) => {
     console.log("QUERY:", req.query);
 
     const date = String(req.query.date);
-
+    const lat = Number(req.query.lat);
+    const lng = Number(req.query.lng);
     if (!date || date === "undefined") {
       return res.status(400).json({
         error: "Missing date",
       });
     }
-
-    const data = await getAvailability(date);
+    const userLocation =
+      Number.isFinite(lat) && Number.isFinite(lng)
+        ? { lat, lng }
+        : undefined;
+        
+    const data = await getAvailability(date, userLocation);
 
     return res.json(data);
   } catch (err) {

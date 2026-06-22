@@ -1,4 +1,4 @@
-import type { Slot } from "../api/courts";
+import type { Slot } from "../api/courtsApi";
 
 type Props = {
   locationId: string;

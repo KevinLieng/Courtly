@@ -7,7 +7,7 @@ const times = Array.from(
   (_, i) => `${String(i + 7).padStart(2, "0")}:00`
 );
 
-const LABEL_WIDTH = "125px";
+const LABEL_WIDTH = "190px";
 const ROW_HEIGHT = "54px";
 const ROW_GAP = "10px";
 const BLOCK_GAP = "4px";
@@ -202,7 +202,7 @@ export default function CourtAvailability() {
           No courts available for this date.
         </div>
       )}
-
+ 
       {!loading && visibleLocations.length > 0 && (
         <div
           style={{
@@ -235,7 +235,22 @@ export default function CourtAvailability() {
                 }}
               >
                 {visibleLocations.name}
+                {visibleLocations.distance !== undefined && (
+                  <div
+                    style={{
+                      marginTop: "4px",
+                      fontSize: "12px",
+                      fontWeight: 600,
+                      color: "#64748b",
+                      paddingLeft: "8px"
+                    }}
+                  >
+                     ~ { visibleLocations.distance.toFixed(1)} km
+                  </div>
+                )}
+                
               </div>
+
             ))}
           </div>
 

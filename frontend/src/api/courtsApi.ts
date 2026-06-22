@@ -19,6 +19,7 @@ export type LocationAvailability = {
   provider: Provider;
   status: AvailabilityStatus;
   slots: Slot[];
+  distance: number;
 };
 
 export type AvailabilityResponse = {
@@ -33,10 +34,23 @@ const api = axios.create({
 export async function getAvailability(
   date: string
 ): Promise<AvailabilityResponse> {
-  console.log("Calling API with:", { date });
+  const userLocation = {
+    lat: -33.8911063948225,
+    lng: 151.20947200330235,
+  };
+
+  console.log("Calling API with:", {
+    date,
+    lat: userLocation.lat,
+    lng: userLocation.lng,
+  });
 
   const res = await api.get<AvailabilityResponse>("/api/availability", {
-    params: { date },
+    params: {
+      date,
+      lat: userLocation.lat,
+      lng: userLocation.lng,
+    },
   });
 
   return res.data;
