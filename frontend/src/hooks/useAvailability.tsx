@@ -4,6 +4,11 @@ import {
   type LocationAvailability,
 } from "../api/courtsApi";
 
+export type UserLocation = {
+  lat: number;
+  lng: number;
+};
+
 export type AvailabilityStatus =
   | "idle"
   | "loading"
@@ -11,7 +16,10 @@ export type AvailabilityStatus =
   | "invalid-date"
   | "error";
 
-export function useAvailability(date: string) {
+export function useAvailability(
+  date: string,
+  userLocation: UserLocation | null = null
+) {
   const [locations, setLocations] = useState<LocationAvailability[]>([]);
   const [status, setStatus] = useState<AvailabilityStatus>("idle");
 
@@ -25,7 +33,7 @@ export function useAvailability(date: string) {
 
     const timer = setTimeout(async () => {
       try {
-        const data = await getAvailability(date);
+        const data = await getAvailability(date, userLocation);
 
         if (cancelled) return;
 
@@ -60,7 +68,7 @@ export function useAvailability(date: string) {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [date]);
+  }, [date, userLocation]);
 
   return {
     locations,

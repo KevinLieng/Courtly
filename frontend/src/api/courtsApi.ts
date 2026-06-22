@@ -9,9 +9,7 @@ export type Slot = {
 
 export type AvailabilityStatus = "ok" | "invalid-date" | "error";
 
-export type Provider =
-  | "city-community"
-  | "other-provider"; // add more later
+export type Provider = "city-community" | "other-provider";
 
 export type LocationAvailability = {
   id: string;
@@ -19,7 +17,12 @@ export type LocationAvailability = {
   provider: Provider;
   status: AvailabilityStatus;
   slots: Slot[];
-  distance: number;
+  distance?: number;
+};
+
+export type UserLocation = {
+  lat: number;
+  lng: number;
 };
 
 export type AvailabilityResponse = {
@@ -32,24 +35,20 @@ const api = axios.create({
 });
 
 export async function getAvailability(
-  date: string
+  date: string,
+  userLocation: UserLocation | null = null
 ): Promise<AvailabilityResponse> {
-  const userLocation = {
-    lat: -33.8911063948225,
-    lng: 151.20947200330235,
-  };
-
   console.log("Calling API with:", {
     date,
-    lat: userLocation.lat,
-    lng: userLocation.lng,
+    lat: userLocation?.lat,
+    lng: userLocation?.lng,
   });
 
   const res = await api.get<AvailabilityResponse>("/api/availability", {
     params: {
       date,
-      lat: userLocation.lat,
-      lng: userLocation.lng,
+      lat: userLocation?.lat,
+      lng: userLocation?.lng,
     },
   });
 
