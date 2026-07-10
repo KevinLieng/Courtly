@@ -13,10 +13,34 @@
   background-size: 40px 100%, 40px 100%, 20px 100%, 20px 100%;
   background-position: left, right, left, right;
   background-attachment: local, local, scroll, scroll;
+
+  @media (max-width: 640px) {
+    /* Slightly narrower venue column + time cells so ~3 columns show at once */
+    --venue-col-width: 140px !important;
+    --time-col-min: 66px !important;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+}
+
+@media (max-width: 640px) {
+  .tableWrapper::-webkit-scrollbar {
+    height: 5px;
+  }
+
+  .tableWrapper::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .tableWrapper::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 3px;
+  }
 }
 
 .table {
-  width: 100%;
+  width: max(100%, calc(var(--venue-col-width) + var(--time-count) * var(--time-col-min)));
   table-layout: fixed;
   border-collapse: collapse;
 }
@@ -41,6 +65,7 @@
 }
 
 .thTime {
+  min-width: var(--time-col-min);
   padding: 7px 3px;
   text-align: center;
   font-size: 10px;

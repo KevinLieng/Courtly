@@ -31,8 +31,10 @@
   border-bottom: 1px solid var(--border);
 
   @media (max-width: 640px) {
-    padding: 12px 14px 8px;
-    gap: 12px;
+    padding: 10px 14px 6px;
+    row-gap: 6px;
+    column-gap: 10px;
+    flex-wrap: wrap;
   }
 }
 
@@ -44,13 +46,35 @@
   min-width: 0;
 
   @media (max-width: 640px) {
-    gap: 8px;
+    /* Unwrap so row1/row2 become direct flex items of .controls, letting
+       the location control be re-ordered onto the duration row below. */
+    display: contents;
   }
 }
 
 /* Row 1: date buttons */
 .controlRow1 {
   min-width: 0;
+  position: relative;
+
+  @media (max-width: 640px) {
+    order: 1;
+    flex: 1 1 100%;
+  }
+}
+
+/* Subtle right-edge fade to hint at horizontal overflow in the date row */
+@media (max-width: 640px) {
+  .controlRow1::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 26px;
+    background: linear-gradient(to right, transparent, var(--surface));
+    pointer-events: none;
+  }
 }
 
 /* Row 2: time filter + location button */
@@ -60,8 +84,28 @@
   gap: 8px;
   flex-wrap: wrap;
 
-  @media (max-width: 480px) {
-    gap: 6px;
+  @media (max-width: 640px) {
+    /* Unwrap so the time filter and location button become their own
+       direct flex items of .controls (see .timeFilterWrap/.locationWrap). */
+    display: contents;
+  }
+}
+
+/* Time-of-day filter: its own full-width row on mobile */
+.timeFilterWrap {
+  min-width: 0;
+
+  @media (max-width: 640px) {
+    order: 2;
+    flex: 1 1 100%;
+  }
+}
+
+/* Location button: shares a row with duration on mobile, left-aligned */
+.locationWrap {
+  @media (max-width: 640px) {
+    order: 3;
+    flex: 0 0 auto;
   }
 }
 
@@ -77,7 +121,18 @@
   align-self: stretch;
 
   @media (max-width: 640px) {
-    display: none;
+    /* Unwrap into .controls' own flex row so the duration toggle can
+       take its own slot below the controls while the legend hides. */
+    display: contents;
+  }
+}
+
+.durationWrap {
+  @media (max-width: 640px) {
+    order: 4;
+    flex: 0 0 auto;
+    display: flex;
+    margin-left: auto;
   }
 }
 
@@ -86,6 +141,10 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 6px;
+
+  @media (max-width: 640px) {
+    display: none;
+  }
 }
 
 .legendTitle {
@@ -131,7 +190,7 @@
   gap: 10px;
 
   @media (max-width: 640px) {
-    padding: 7px 14px 6px;
+    padding: 6px 14px 4px;
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;

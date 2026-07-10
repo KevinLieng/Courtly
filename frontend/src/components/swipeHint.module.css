@@ -1,0 +1,33 @@
+.hint {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 14px 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--surface-subtle);
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.4;
+
+  /* Only on narrow, portrait screens; disappears automatically on rotate. */
+  @media (max-width: 640px) and (orientation: portrait) {
+    display: flex;
+  }
+}
+
+.dismissButton {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.dismissButton:hover {
+  color: var(--text-secondary);
+}

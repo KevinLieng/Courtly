@@ -36,4 +36,8 @@
   font-size: 12px;
   color: var(--text-muted);
   border-top: 1px solid var(--border);
+
+  @media (max-width: 640px) {
+    padding: 10px 20px 14px;
+  }
 }

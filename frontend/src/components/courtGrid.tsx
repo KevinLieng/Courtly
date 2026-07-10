@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import LocationRow from "./locationRow";
 import type { Slot } from "../api/courtsApi";
 import styles from "./courtGrid.module.css";
-import { VENUE_COL_WIDTH } from "./gridConstants";
+import { VENUE_COL_WIDTH, TIME_COL_MIN_WIDTH } from "./gridConstants";
 
 type LocationAvailability = {
   id: string;
@@ -53,6 +53,8 @@ export default function AvailabilityGrid({ date, times, locations, duration }: P
 
   const cssVars = {
     "--venue-col-width": VENUE_COL_WIDTH,
+    "--time-col-min": TIME_COL_MIN_WIDTH,
+    "--time-count": times.length,
   } as CSSProperties;
 
   return (

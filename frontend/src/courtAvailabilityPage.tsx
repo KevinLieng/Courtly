@@ -6,6 +6,7 @@ import SkeletonGrid from "./components/skeletonGrid";
 import CurrentLocationButton from "./components/currentButton";
 import TimeFilterButtons, { type TimePeriod } from "./components/timeFilterButtons";
 import DurationToggle from "./components/durationToggle";
+import SwipeHint from "./components/swipeHint";
 import { times as allTimes } from "./components/gridConstants";
 import { nextHour } from "./utils/availabilityWindows";
 import styles from "./courtAvailabilityPage.module.css";
@@ -68,12 +69,18 @@ export default function CourtAvailability() {
               <SevenDayDisplay date={date} setDate={setDate} minDate={today} maxDate={maxDateString} />
             </div>
             <div className={styles.controlRow2}>
-              <TimeFilterButtons active={activePeriod} onChange={setActivePeriod} />
-              <CurrentLocationButton onLocationFound={setUserLocation} locationActive={!!userLocation} />
+              <div className={styles.timeFilterWrap}>
+                <TimeFilterButtons active={activePeriod} onChange={setActivePeriod} />
+              </div>
+              <div className={styles.locationWrap}>
+                <CurrentLocationButton onLocationFound={setUserLocation} locationActive={!!userLocation} />
+              </div>
             </div>
           </div>
           <div className={styles.controlsRight}>
-            <DurationToggle value={duration} onChange={setDuration} />
+            <div className={styles.durationWrap}>
+              <DurationToggle value={duration} onChange={setDuration} />
+            </div>
             <div className={styles.legend} aria-label="Availability legend">
               <span className={styles.legendTitle}>Courts</span>
               <div className={styles.legendItems}>
@@ -122,6 +129,7 @@ export default function CourtAvailability() {
               </div>
               <span className={styles.summaryHint}>Numbers = courts. Tap to book.</span>
             </div>
+            <SwipeHint />
             <AvailabilityGrid date={date} times={effectiveTimes} locations={visibleLocations} duration={duration} />
           </>
         )}
