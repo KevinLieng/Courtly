@@ -1,0 +1,56 @@
+.page {
+  padding: 1rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.state {
+  margin-top: 48px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.stateError {
+  composes: state;
+  color: var(--danger);
+}
+
+.loadingState {
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.retryButton {
+  margin-top: 12px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 500;
+  font-size: 14px;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.retryButton:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}

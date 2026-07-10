@@ -1,0 +1,49 @@
+.row {
+  display: grid;
+  gap: var(--block-gap);
+  margin-bottom: var(--row-gap);
+}
+
+.slot {
+  height: var(--row-height);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  user-select: none;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.unavailable {
+  cursor: default;
+  color: var(--unavailable-text);
+  background: var(--unavailable-bg);
+}
+
+.available {
+  cursor: pointer;
+  color: #ffffff;
+}
+
+.available:hover {
+  transform: scale(1.08);
+  filter: brightness(1.05);
+}
+
+.available:active {
+  transform: scale(0.96);
+}
+
+.count1 {
+  background: var(--avail-1);
+}
+
+.count2 {
+  background: var(--avail-2);
+}
+
+.count3 {
+  background: var(--avail-3);
+}

@@ -3,7 +3,9 @@ import { useAvailability } from "./hooks/useAvailability";
 import DatePicker from "./components/datePicker";
 import SevenDayDisplay from "./components/sevenDayDisplay";
 import AvailabilityGrid from "./components/courtGrid";
+import SkeletonGrid from "./components/skeletonGrid";
 import CurrentLocationButton from "./components/currentButton";
+import styles from "./courtAvailabilityPage.module.css";
 
 function getLocalDateString(date = new Date()) {
   const year = date.getFullYear();
@@ -27,7 +29,7 @@ export default function CourtAvailability() {
     lng: number;
   } | null>(null);
 
-  const { locations, loading, invalidDate, error, status } =
+  const { locations, loading, invalidDate, error, status, retry } =
     useAvailability(date, userLocation);
 
   const loaded = status !== "idle" && status !== "loading";
@@ -36,90 +38,29 @@ export default function CourtAvailability() {
     location.slots.some((slot) => slot.available)
   );
 
-
-
   return (
-    <div
-      style={{
-        padding: "1rem 2rem 2rem",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <SevenDayDisplay date={date} setDate={setDate} />
+    <div className={styles.page}>
+      <div className={styles.controls}>
+        <SevenDayDisplay date={date} setDate={setDate} />
 
-      <DatePicker
-        date={date}
-        setDate={setDate}
-        minDate={today}
-        maxDate={maxDateString}
-      />
+        <DatePicker
+          date={date}
+          setDate={setDate}
+          minDate={today}
+          maxDate={maxDateString}
+        />
 
-      <CurrentLocationButton onLocationFound={setUserLocation} />
+        <CurrentLocationButton onLocationFound={setUserLocation} />
+      </div>
 
-      {loading && (
-        <div
-          style={{
-            marginTop: "48px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "14px",
-            color: "#94a3b8",
-            fontWeight: 700,
-          }}
-        >
-          <style>
-            {`
-              @keyframes spin {
-                to {
-                  transform: rotate(360deg);
-                }
-              }
-            `}
-          </style>
-
-          <div
-            style={{
-              width: "34px",
-              height: "34px",
-              border: "4px solid #334155",
-              borderTopColor: "#22c55e",
-              borderRadius: "999px",
-              animation: "spin 0.8s linear infinite",
-            }}
-          />
-
-          <div>Checking availability...</div>
-        </div>
-      )}
-
-      {/* {!loading && invalidDate && (
-        <div
-          style={{
-            marginTop: "48px",
-            textAlign: "center",
-            color: "#94a3b8",
-            fontWeight: 700,
-            fontSize: "18px",
-          }}
-        >
-          This date is not bookable yet.
-        </div>
-      )} */}
+      {loading && <SkeletonGrid />}
 
       {!loading && error && (
-        <div
-          style={{
-            marginTop: "48px",
-            textAlign: "center",
-            color: "#f87171",
-            fontWeight: 700,
-            fontSize: "18px",
-          }}
-        >
-          Failed to load availability.
+        <div className={styles.stateError}>
+          <div>Failed to load availability.</div>
+          <button type="button" className={styles.retryButton} onClick={retry}>
+            Retry
+          </button>
         </div>
       )}
 
@@ -128,17 +69,7 @@ export default function CourtAvailability() {
         !invalidDate &&
         !error &&
         visibleLocations.length === 0 && (
-          <div
-            style={{
-              marginTop: "48px",
-              textAlign: "center",
-              color: "#94a3b8",
-              fontWeight: 700,
-              fontSize: "18px",
-            }}
-          >
-            No courts available for this date.
-          </div>
+          <div className={styles.state}>No courts available for this date.</div>
         )}
 
       {!loading && visibleLocations.length > 0 && (

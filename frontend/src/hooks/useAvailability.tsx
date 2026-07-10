@@ -22,6 +22,7 @@ export function useAvailability(
 ) {
   const [locations, setLocations] = useState<LocationAvailability[]>([]);
   const [status, setStatus] = useState<AvailabilityStatus>("idle");
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     if (!date) return;
@@ -68,7 +69,7 @@ export function useAvailability(
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [date, userLocation]);
+  }, [date, userLocation, retryCount]);
 
   return {
     locations,
@@ -76,5 +77,6 @@ export function useAvailability(
     invalidDate: status === "invalid-date",
     error: status === "error",
     status,
+    retry: () => setRetryCount((count) => count + 1),
   };
 }

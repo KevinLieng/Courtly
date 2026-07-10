@@ -1,0 +1,74 @@
+.grid {
+  width: min(98vw, 1600px);
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: var(--label-width) minmax(0, 1fr);
+  column-gap: 8px;
+  align-items: start;
+}
+
+.labelColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.labelSpacer {
+  height: 24px;
+  margin-bottom: 8px;
+}
+
+.locationLabel {
+  height: var(--row-height);
+  margin-bottom: var(--row-gap);
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 16px;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  padding-left: 14px;
+  box-sizing: border-box;
+}
+
+.distance {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding-left: 8px;
+}
+
+/* Horizontal scroll shadows: fade in/out automatically at the scroll edges
+   via the background-attachment local/scroll trick, so no JS overflow check
+   is needed. */
+.scrollArea {
+  overflow-x: auto;
+  padding-bottom: 10px;
+
+  background:
+    linear-gradient(to right, var(--bg) 30%, rgba(251, 251, 250, 0)),
+    linear-gradient(to right, rgba(251, 251, 250, 0), var(--bg) 70%) 100% 0,
+    linear-gradient(to right, rgba(28, 27, 26, 0.12), rgba(28, 27, 26, 0)),
+    linear-gradient(to right, rgba(28, 27, 26, 0), rgba(28, 27, 26, 0.12)) 100% 0;
+  background-repeat: no-repeat;
+  background-color: var(--bg);
+  background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+  background-position: 0 0, 100% 0, 0 0, 100% 0;
+  background-attachment: local, local, scroll, scroll;
+}
+
+.timeGrid {
+  min-width: var(--time-grid-min-width);
+}
+
+.timeHeader {
+  display: grid;
+  grid-template-columns: repeat(var(--time-count), minmax(0, 1fr));
+  gap: var(--block-gap);
+  height: 24px;
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  align-items: center;
+}

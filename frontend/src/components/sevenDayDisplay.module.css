@@ -1,0 +1,41 @@
+.row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.day {
+  width: 120px;
+  height: 42px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text-secondary);
+  font: inherit;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.day:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.day:active {
+  transform: scale(0.97);
+}
+
+.daySelected,
+.daySelected:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}

@@ -1,0 +1,18 @@
+.wrapper {
+  margin-bottom: 16px;
+}
+
+.input {
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--surface);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: border-color 0.15s ease;
+}
+
+.input:hover {
+  border-color: var(--accent);
+}

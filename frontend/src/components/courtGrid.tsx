@@ -1,16 +1,15 @@
+import type { CSSProperties } from "react";
 import LocationRow from "./locationRow";
 import type { Slot } from "../api/courtsApi";
-
-const times = Array.from(
-  { length: 16 },
-  (_, i) => `${String(i + 7).padStart(2, "0")}:00`
-);
-
-const LABEL_WIDTH = "190px";
-const ROW_HEIGHT = "54px";
-const ROW_GAP = "10px";
-const BLOCK_GAP = "4px";
-const TIME_GRID_MIN_WIDTH = "1040px";
+import styles from "./courtGrid.module.css";
+import {
+  times,
+  LABEL_WIDTH,
+  ROW_HEIGHT,
+  ROW_GAP,
+  BLOCK_GAP,
+  TIME_GRID_MIN_WIDTH,
+} from "./gridConstants";
 
 type LocationAvailability = {
   id: string;
@@ -28,49 +27,30 @@ export default function AvailabilityGrid({
   date,
   locations,
 }: AvailabilityGridProps) {
+  const gridStyle = {
+    "--label-width": LABEL_WIDTH,
+    "--row-height": ROW_HEIGHT,
+    "--row-gap": ROW_GAP,
+  } as CSSProperties;
+
+  const timeGridStyle = {
+    "--time-grid-min-width": TIME_GRID_MIN_WIDTH,
+    "--time-count": times.length,
+    "--block-gap": BLOCK_GAP,
+  } as CSSProperties;
+
   return (
-    <div
-      style={{
-        width: "min(98vw, 1600px)",
-        marginTop: "24px",
-        display: "grid",
-        gridTemplateColumns: `${LABEL_WIDTH} minmax(0, 1fr)`,
-        columnGap: "8px",
-        alignItems: "start",
-      }}
-    >
+    <div className={styles.grid} style={gridStyle}>
       {/* Fixed left location names */}
-      <div>
-        <div style={{ height: "24px", marginBottom: "8px" }} />
+      <div className={styles.labelColumn}>
+        <div className={styles.labelSpacer} />
 
         {locations.map((location) => (
-          <div
-            key={location.id}
-            style={{
-              height: ROW_HEIGHT,
-              marginBottom: ROW_GAP,
-              display: "flex",
-              alignItems: "center",
-              fontWeight: 700,
-              fontSize: "16px",
-              whiteSpace: "nowrap",
-              color: "#94a3b8",
-              paddingLeft: "14px",
-              boxSizing: "border-box",
-            }}
-          >
+          <div key={location.id} className={styles.locationLabel}>
             <span>{location.name}</span>
 
             {location.distance !== undefined && (
-              <div
-                style={{
-                  marginTop: "4px",
-                  fontSize: "12px",
-                  fontWeight: 600,
-                  color: "#64748b",
-                  paddingLeft: "8px",
-                }}
-              >
+              <div className={styles.distance}>
                 ~ {location.distance.toFixed(1)} km
               </div>
             )}
@@ -79,31 +59,10 @@ export default function AvailabilityGrid({
       </div>
 
       {/* Only this side scrolls */}
-      <div
-        style={{
-          overflowX: "auto",
-          paddingBottom: "10px",
-        }}
-      >
-        <div
-          style={{
-            minWidth: TIME_GRID_MIN_WIDTH,
-          }}
-        >
+      <div className={styles.scrollArea}>
+        <div className={styles.timeGrid} style={timeGridStyle}>
           {/* Time header */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: `repeat(${times.length}, minmax(0, 1fr))`,
-              gap: BLOCK_GAP,
-              height: "24px",
-              marginBottom: "8px",
-              textAlign: "center",
-              fontSize: "12px",
-              color: "#666",
-              alignItems: "center",
-            }}
-          >
+          <div className={styles.timeHeader}>
             {times.map((time) => (
               <div key={time}>{time}</div>
             ))}

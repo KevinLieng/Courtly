@@ -1,0 +1,65 @@
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.grid {
+  width: min(98vw, 1600px);
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: var(--label-width) minmax(0, 1fr);
+  column-gap: 8px;
+  align-items: start;
+}
+
+.block {
+  background: var(--unavailable-bg);
+  border-radius: 8px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.labelColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.labelSpacer {
+  height: 24px;
+  margin-bottom: 8px;
+}
+
+.labelBlock {
+  height: var(--row-height);
+  margin-bottom: var(--row-gap);
+  width: 70%;
+}
+
+.scrollArea {
+  overflow: hidden;
+}
+
+.timeGrid {
+  min-width: var(--time-grid-min-width);
+}
+
+.timeHeaderBlock {
+  height: 14px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(var(--time-count), minmax(0, 1fr));
+  gap: var(--block-gap);
+  margin-bottom: var(--row-gap);
+}
+
+.cell {
+  height: var(--row-height);
+}

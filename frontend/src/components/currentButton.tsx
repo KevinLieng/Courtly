@@ -1,4 +1,5 @@
 import { useState } from "react";
+import styles from "./currentButton.module.css";
 
 type CurrentLocationButtonProps = {
   onLocationFound: (coords: { lat: number; lng: number }) => void;
@@ -37,46 +38,17 @@ export default function CurrentLocationButton({
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "8px",
-        marginBottom: "16px",
-      }}
-    >
+    <div className={styles.wrapper}>
       <button
         type="button"
         onClick={handleUseCurrentLocation}
         disabled={loading}
-        style={{
-          height: "42px",
-          padding: "10px 16px",
-          borderRadius: "8px",
-          border: "1px solid #3A3F46",
-          cursor: loading ? "not-allowed" : "pointer",
-          backgroundColor: "#2B2F36",
-          color: "#D7DEE8",
-          fontWeight: 600,
-          opacity: loading ? 0.7 : 1,
-          marginTop: "13px",
-        }}
+        className={styles.button}
       >
         {loading ? "Getting location..." : "Use current location"}
       </button>
 
-      {error && (
-        <div
-          style={{
-            color: "#f87171",
-            fontSize: "13px",
-            fontWeight: 600,
-          }}
-        >
-          {error}
-        </div>
-      )}
+      {error && <div className={styles.error}>{error}</div>}
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import styles from "./sevenDayDisplay.module.css";
+
 type SevenDayDisplayProps = {
   date: string;
   setDate: (date: string) => void;
@@ -33,40 +35,16 @@ export default function SevenDayDisplay({
   });
 
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: "8px",
-        marginBottom: "16px",
-        flexWrap: "wrap",
-        justifyContent: "center",
-      }}
-    >
+    <div className={styles.row}>
       {nextSevenDays.map((d) => (
         <button
           key={d.value}
           onClick={() => setDate(d.value)}
-          style={{
-            width: "120px",
-            height: "42px",
-            padding: "10px 14px",
-            borderRadius: "8px",
-            border:
-              date === d.value
-                ? "1px solid #5B8CFF"
-                : "1px solid #3A3F46",
-            cursor: "pointer",
-            backgroundColor: date === d.value ? "#2563EB" : "#2B2F36",
-            color: date === d.value ? "#FFFFFF" : "#D7DEE8",
-            fontWeight: date === d.value ? 600 : 500,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow:
-              date === d.value
-                ? "0 0 0 1px rgba(37, 99, 235, 0.25)"
-                : "none",
-          }}
+          className={
+            date === d.value
+              ? `${styles.day} ${styles.daySelected}`
+              : styles.day
+          }
         >
           {d.label}
         </button>

@@ -1,3 +1,5 @@
+import styles from "./datePicker.module.css";
+
 type DatePickerProps = {
   date: string;
   setDate: (date: string) => void;
@@ -12,19 +14,14 @@ export default function DatePicker({
   maxDate,
 }: DatePickerProps) {
   return (
-    <div style={{ marginBottom: "0px" }}>
+    <div className={styles.wrapper}>
       <input
         type="date"
         value={date}
         min={minDate}
         max={maxDate}
         onChange={(e) => setDate(e.target.value)}
-        style={{
-          padding: "8px",
-          fontSize: "16px",
-          borderRadius: "8px",
-          border: "1px solid #ccc",
-        }}
+        className={styles.input}
       />
     </div>
   );
