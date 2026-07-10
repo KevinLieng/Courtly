@@ -23,6 +23,7 @@
   --danger-bg: rgba(220, 38, 38, 0.08);
 
   --shadow: rgba(28, 27, 26, 0.06) 0 1px 2px, rgba(28, 27, 26, 0.04) 0 4px 10px;
+  --scroll-shadow-color: rgba(28, 27, 26, 0.12);
 
   --sans: "Geist Variable", system-ui, "Segoe UI", Roboto, sans-serif;
   --heading: "Geist Variable", system-ui, "Segoe UI", Roboto, sans-serif;
@@ -43,6 +44,36 @@
   }
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111110;
+    --surface: #181716;
+    --border: #2c2a27;
+
+    --text: #f0eeea;
+    --text-secondary: #9c9894;
+    --text-muted: #5c5956;
+
+    --accent: #4d7eff;
+    --accent-hover: #6691ff;
+    --accent-bg: rgba(77, 126, 255, 0.12);
+
+    --avail-1: #22c55e;
+    --avail-2: #16a34a;
+    --avail-3: #15803d;
+    --unavailable-bg: #1a1918;
+    --unavailable-text: #3d3b38;
+
+    --danger: #f87171;
+    --danger-bg: rgba(248, 113, 113, 0.1);
+
+    --shadow: rgba(0, 0, 0, 0.3) 0 1px 2px, rgba(0, 0, 0, 0.2) 0 4px 10px;
+    --scroll-shadow-color: rgba(0, 0, 0, 0.25);
+
+    color-scheme: dark;
+  }
+}
+
 #root {
   max-width: 1200px;
   width: 100%;
@@ -55,6 +86,10 @@
 
 body {
   margin: 0;
+}
+
+main {
+  flex: 1;
 }
 
 h1,

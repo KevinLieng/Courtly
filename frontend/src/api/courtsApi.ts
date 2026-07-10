@@ -18,6 +18,9 @@ export type LocationAvailability = {
   status: AvailabilityStatus;
   slots: Slot[];
   distance?: number;
+  lat: number;
+  lng: number;
+  mapsUrl: string;
 };
 
 export type UserLocation = {

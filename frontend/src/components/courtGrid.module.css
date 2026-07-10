@@ -1,6 +1,53 @@
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.legendSwatch {
+  width: 26px;
+  height: 20px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.swatchCount1 { background: var(--avail-1); }
+.swatchCount2 { background: var(--avail-2); }
+.swatchCount3 { background: var(--avail-3); }
+
+.legendDivider {
+  width: 1px;
+  height: 14px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.legendNote {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
 .grid {
   width: min(98vw, 1600px);
-  margin-top: 24px;
+  margin-top: 12px;
   display: grid;
   grid-template-columns: var(--label-width) minmax(0, 1fr);
   column-gap: 8px;
@@ -21,35 +68,48 @@
   height: var(--row-height);
   margin-bottom: var(--row-gap);
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 15px;
   white-space: nowrap;
   color: var(--text-secondary);
   padding-left: 14px;
   box-sizing: border-box;
 }
 
-.distance {
-  margin-top: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  padding-left: 8px;
+.locationLink {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 15px;
+  transition: color 0.15s ease;
 }
 
-/* Horizontal scroll shadows: fade in/out automatically at the scroll edges
-   via the background-attachment local/scroll trick, so no JS overflow check
-   is needed. */
+.locationLink:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.distance {
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* Horizontal scroll shadows via background-attachment local/scroll trick */
 .scrollArea {
   overflow-x: auto;
   padding-bottom: 10px;
 
   background:
-    linear-gradient(to right, var(--bg) 30%, rgba(251, 251, 250, 0)),
-    linear-gradient(to right, rgba(251, 251, 250, 0), var(--bg) 70%) 100% 0,
-    linear-gradient(to right, rgba(28, 27, 26, 0.12), rgba(28, 27, 26, 0)),
-    linear-gradient(to right, rgba(28, 27, 26, 0), rgba(28, 27, 26, 0.12)) 100% 0;
+    linear-gradient(to right, var(--bg) 30%, transparent),
+    linear-gradient(to right, transparent, var(--bg) 70%) 100% 0,
+    linear-gradient(to right, var(--scroll-shadow-color), transparent),
+    linear-gradient(to right, transparent, var(--scroll-shadow-color)) 100% 0;
   background-repeat: no-repeat;
   background-color: var(--bg);
   background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
@@ -59,6 +119,25 @@
 
 .timeGrid {
   min-width: var(--time-grid-min-width);
+  position: relative;
+}
+
+.currentTimeOverlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 8px;
+  border: 2px solid var(--accent);
+  background: var(--accent-bg);
+
+  /* Compute column width from the grid's own CSS custom properties */
+  --col-w: calc(
+    (100% - (var(--time-count) - 1) * var(--block-gap)) / var(--time-count)
+  );
+  left: calc(var(--current-time-index) * (var(--col-w) + var(--block-gap)));
+  width: var(--col-w);
 }
 
 .timeHeader {
@@ -71,4 +150,22 @@
   font-size: 12px;
   color: var(--text-muted);
   align-items: center;
+}
+
+.currentTimeHeader {
+  color: var(--accent);
+  font-weight: 700;
+  position: relative;
+}
+
+.currentTimeHeader::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
 }

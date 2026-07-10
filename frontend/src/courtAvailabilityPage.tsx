@@ -43,14 +43,15 @@ export default function CourtAvailability() {
       <div className={styles.controls}>
         <SevenDayDisplay date={date} setDate={setDate} />
 
-        <DatePicker
-          date={date}
-          setDate={setDate}
-          minDate={today}
-          maxDate={maxDateString}
-        />
-
-        <CurrentLocationButton onLocationFound={setUserLocation} />
+        <div className={styles.controlsRow}>
+          <DatePicker
+            date={date}
+            setDate={setDate}
+            minDate={today}
+            maxDate={maxDateString}
+          />
+          <CurrentLocationButton onLocationFound={setUserLocation} />
+        </div>
       </div>
 
       {loading && <SkeletonGrid />}
@@ -73,7 +74,14 @@ export default function CourtAvailability() {
         )}
 
       {!loading && visibleLocations.length > 0 && (
-        <AvailabilityGrid date={date} locations={visibleLocations} />
+        <>
+          <p className={styles.resultsSummary}>
+            {visibleLocations.length === 1
+              ? "1 location with courts available"
+              : `${visibleLocations.length} locations with courts available`}
+          </p>
+          <AvailabilityGrid date={date} locations={visibleLocations} />
+        </>
       )}
     </div>
   );

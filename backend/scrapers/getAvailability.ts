@@ -11,6 +11,7 @@ type LocationConfig = {
   providerLocationId: number; // the ugly ID used in the booking URL
   lat: number;
   lng: number;
+  mapsUrl: string;
 };
 
 type LocationAvailability = {
@@ -18,6 +19,9 @@ type LocationAvailability = {
   name: string;
   provider: Provider;
   distance?: number;
+  lat: number;
+  lng: number;
+  mapsUrl: string;
   status: AvailabilityResponse["status"];
   slots: AvailabilityResponse["slots"];
 };
@@ -33,58 +37,64 @@ const locations: LocationConfig[] = [
     name: "Surry Hills",
     provider: "city-community",
     providerLocationId: 2,
-    lat:-33.8881445604106,
+    lat: -33.8881445604106,
     lng: 151.20369882014919,
+    mapsUrl: "https://maps.app.goo.gl/WVXPzwutn6gHNEuG9",
   },
   {
     id: "alexandria",
     name: "Alexandria",
     provider: "city-community",
     providerLocationId: 3,
-    lat: -33.90042791823193, 
+    lat: -33.90042791823193,
     lng: 151.19678674543417,
+    mapsUrl: "https://maps.app.goo.gl/UwtsPCfzCfi88t4XA",
   },
   {
     id: "beaconsfield",
     name: "Beaconsfield",
     provider: "city-community",
     providerLocationId: 4,
-    lat: -33.91140677806596, 
-    lng: 151.19959643927322
+    lat: -33.91140677806596,
+    lng: 151.19959643927322,
+    mapsUrl: "https://maps.app.goo.gl/PuyoHhSnD2vkfSaY6",
   },
   {
     id: "glebe",
     name: "Glebe",
     provider: "city-community",
     providerLocationId: 5,
-    lat: -33.88018036066187, 
+    lat: -33.88018036066187,
     lng: 151.1842501460354,
+    mapsUrl: "https://maps.app.goo.gl/aCbjhrUCrT4wyC9XA",
   },
   {
     id: "rosebery",
     name: "Rosebery",
     provider: "city-community",
     providerLocationId: 6,
-    lat: -33.91852131050488, 
+    lat: -33.91852131050488,
     lng: 151.2040947445274,
+    mapsUrl: "https://maps.app.goo.gl/tEdEU5EcPfMzi9Xu8",
   },
   {
     id: "centennial-park",
     name: "Centennial Park",
     provider: "parklands",
     providerLocationId: 55,
-    lat: -33.896134186054155, 
+    lat: -33.896134186054155,
     lng: 151.2227395249307,
+    mapsUrl: "https://maps.app.goo.gl/HCT4skBKwMvj4kq37",
   },
   {
     id: "moore-park",
     name: "Moore Park",
     provider: "parklands",
     providerLocationId: 72,
-    lat: -33.89467781218229, 
+    lat: -33.89467781218229,
     lng: 151.2199788257296,
+    mapsUrl: "https://maps.app.goo.gl/sT3ixhX1MCTr4UYL8",
   },
-  
 ];
 
 function getDistanceKm(
@@ -125,27 +135,30 @@ async function scrapeLocation(
         id: location.id,
         name: location.name,
         provider: location.provider,
+        lat: location.lat,
+        lng: location.lng,
+        mapsUrl: location.mapsUrl,
         status: data.status,
         slots: data.slots,
-        distance
+        distance,
       };
     }
 
     if (location.provider === "parklands") {
       const data = await parklandsScraper(location.providerLocationId, date);
-			const distance = userLocation
-			? getDistanceKm(userLocation, {
-					lat: location.lat,
-					lng: location.lng,
-			})
+      const distance = userLocation
+        ? getDistanceKm(userLocation, { lat: location.lat, lng: location.lng })
         : undefined;
       return {
         id: location.id,
         name: location.name,
         provider: location.provider,
+        lat: location.lat,
+        lng: location.lng,
+        mapsUrl: location.mapsUrl,
         status: data.status,
         slots: data.slots,
-				distance
+        distance,
       };
     }
 
@@ -153,6 +166,9 @@ async function scrapeLocation(
       id: location.id,
       name: location.name,
       provider: location.provider,
+      lat: location.lat,
+      lng: location.lng,
+      mapsUrl: location.mapsUrl,
       status: "error",
       slots: [],
     };
@@ -162,6 +178,9 @@ async function scrapeLocation(
     return {
       id: location.id,
       name: location.name,
+      lat: location.lat,
+      lng: location.lng,
+      mapsUrl: location.mapsUrl,
       provider: location.provider,
       status: "error",
       slots: [],

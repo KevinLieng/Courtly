@@ -25,11 +25,13 @@
 .available {
   cursor: pointer;
   color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
 }
 
 .available:hover {
   transform: scale(1.08);
-  filter: brightness(1.05);
+  filter: brightness(1.08);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22);
 }
 
 .available:active {
