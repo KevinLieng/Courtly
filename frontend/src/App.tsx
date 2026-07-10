@@ -6,26 +6,30 @@ export default function App() {
     <>
       <header className={styles.header}>
         <div className={styles.logoRow}>
+          {/* Top-down tennis court */}
           <svg
             className={styles.logoIcon}
-            viewBox="0 0 28 20"
+            viewBox="0 0 36 24"
             fill="none"
             aria-hidden="true"
           >
-            <rect x="1" y="1" width="26" height="18" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-            <line x1="14" y1="1" x2="14" y2="19" stroke="currentColor" strokeWidth="1.5" />
-            <line x1="1" y1="7" x2="27" y2="7" stroke="currentColor" strokeWidth="1" />
-            <line x1="1" y1="13" x2="27" y2="13" stroke="currentColor" strokeWidth="1" />
+            <rect x="1" y="1" width="34" height="22" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+            <line x1="7" y1="1" x2="7" y2="23" stroke="currentColor" strokeWidth="0.75" />
+            <line x1="29" y1="1" x2="29" y2="23" stroke="currentColor" strokeWidth="0.75" />
+            <line x1="1" y1="12" x2="35" y2="12" stroke="currentColor" strokeWidth="2" />
+            <line x1="7" y1="7" x2="29" y2="7" stroke="currentColor" strokeWidth="0.75" />
+            <line x1="7" y1="17" x2="29" y2="17" stroke="currentColor" strokeWidth="0.75" />
+            <line x1="18" y1="7" x2="18" y2="17" stroke="currentColor" strokeWidth="0.75" />
           </svg>
-          <h1>Courtly</h1>
+          <h1 className={styles.wordmark}>Courtly</h1>
         </div>
-        <p className={styles.tagline}>Find nearby tennis courts available to book</p>
+        <p className={styles.tagline}>Find an available tennis court across Sydney</p>
       </header>
       <main>
         <CourtAvailability />
       </main>
       <footer className={styles.footer}>
-        Court availability data sourced from City of Sydney and Centennial Parklands.
+        Court availability sourced from City of Sydney and Centennial Parklands.
       </footer>
     </>
   );

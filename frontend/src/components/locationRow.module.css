@@ -1,51 +1,108 @@
 .row {
-  display: grid;
-  gap: var(--block-gap);
-  margin-bottom: var(--row-gap);
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.1s ease;
 }
 
-.slot {
-  height: var(--row-height);
-  border-radius: 8px;
+.row:last-child {
+  border-bottom: none;
+}
+
+.row:hover {
+  background-color: var(--accent-soft);
+}
+
+.row:hover .tdVenue {
+  background-color: var(--accent-soft);
+}
+
+.tdVenue {
+  position: sticky;
+  left: 0;
+  background: var(--surface-subtle);
+  z-index: 2;
+  padding: 0 10px 0 16px;
+  vertical-align: middle;
+  transition: background-color 0.1s ease;
+  box-shadow: 1px 0 0 var(--border);
+}
+
+.venueLink {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.12s ease;
+}
+
+.venueLink:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.distance {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.tdSlot {
+  padding: 4px 3px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.tdSlotCurrent {
+  background-color: var(--accent-soft);
+}
+
+.tdSlotCurrent .slotAvail {
+  position: relative;
+  z-index: 1;
+}
+
+.slotAvail {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
-  user-select: none;
-  transition: transform 0.15s ease, filter 0.15s ease;
-}
-
-.unavailable {
-  cursor: default;
-  color: var(--unavailable-text);
-  background: var(--unavailable-bg);
-}
-
-.available {
-  cursor: pointer;
+  width: 100%;
+  height: 38px;
+  border-radius: 5px;
   color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: filter 0.12s ease, transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
 }
 
-.available:hover {
-  transform: scale(1.08);
-  filter: brightness(1.08);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22);
+.slotAvail:hover {
+  filter: brightness(0.88);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
 }
 
-.available:active {
-  transform: scale(0.96);
+.slotAvail:active {
+  transform: translateY(0);
+  box-shadow: none;
+  filter: none;
 }
 
-.count1 {
-  background: var(--avail-1);
-}
+/* Three-tier availability intensity */
+.slotLow  { background: var(--avail-low);  }
+.slotMid  { background: var(--avail-mid);  }
+.slotHigh { background: var(--avail-high); }
 
-.count2 {
-  background: var(--avail-2);
-}
-
-.count3 {
-  background: var(--avail-3);
+.slotEmpty {
+  display: block;
+  width: 100%;
+  height: 38px;
+  border-radius: 5px;
+  background: var(--empty-slot);
+  border: 1px solid var(--empty-slot-border);
 }

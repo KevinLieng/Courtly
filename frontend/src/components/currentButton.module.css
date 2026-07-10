@@ -1,40 +1,50 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 4px;
 }
 
 .button {
-  height: 42px;
-  padding: 10px 16px;
+  height: 36px;
+  padding: 0 14px;
   border-radius: 8px;
   border: 1px solid var(--border);
   cursor: pointer;
   background: var(--surface);
-  color: var(--text);
+  color: var(--text-secondary);
   font: inherit;
   font-weight: 500;
-  font-size: 14px;
-  transition: border-color 0.15s ease, transform 0.1s ease;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: border-color 0.12s ease, background-color 0.12s ease, color 0.12s ease;
 }
 
 .button:hover:not(:disabled) {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+  background: var(--surface-subtle);
 }
 
 .button:active:not(:disabled) {
-  transform: scale(0.97);
+  background: var(--surface-subtle);
 }
 
 .button:disabled {
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.5;
+}
+
+.buttonActive,
+.buttonActive:hover:not(:disabled) {
+  border-color: rgba(37, 99, 235, 0.35);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
 }
 
 .error {
   color: var(--danger);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 500;
 }

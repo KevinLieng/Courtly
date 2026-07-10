@@ -1,54 +1,43 @@
 import type { CSSProperties } from "react";
-import {
-  LABEL_WIDTH,
-  ROW_HEIGHT,
-  ROW_GAP,
-  BLOCK_GAP,
-  TIME_GRID_MIN_WIDTH,
-  times,
-} from "./gridConstants";
+import { times } from "./gridConstants";
+import { VENUE_COL_WIDTH, TIME_COL_MIN_WIDTH } from "./gridConstants";
 import styles from "./skeletonGrid.module.css";
 
 const SKELETON_ROWS = 5;
 
 export default function SkeletonGrid() {
-  const gridStyle = {
-    "--label-width": LABEL_WIDTH,
-    "--row-height": ROW_HEIGHT,
-    "--row-gap": ROW_GAP,
-  } as CSSProperties;
-
-  const timeGridStyle = {
-    "--time-grid-min-width": TIME_GRID_MIN_WIDTH,
+  const cssVars = {
+    "--venue-col-width": VENUE_COL_WIDTH,
+    "--time-col-min": TIME_COL_MIN_WIDTH,
     "--time-count": times.length,
-    "--block-gap": BLOCK_GAP,
   } as CSSProperties;
 
   return (
-    <div className={styles.grid} style={gridStyle} aria-hidden="true">
-      <div className={styles.labelColumn}>
-        <div className={styles.labelSpacer} />
-        {Array.from({ length: SKELETON_ROWS }, (_, i) => (
-          <div key={i} className={`${styles.block} ${styles.labelBlock}`} />
-        ))}
-      </div>
-
-      <div className={styles.scrollArea}>
-        <div className={styles.timeGrid} style={timeGridStyle}>
-          <div className={`${styles.block} ${styles.timeHeaderBlock}`} />
-
-          {Array.from({ length: SKELETON_ROWS }, (_, rowIndex) => (
-            <div key={rowIndex} className={styles.row}>
-              {times.map((time) => (
-                <div
-                  key={time}
-                  className={`${styles.block} ${styles.cell}`}
-                />
+    <div className={styles.tableWrapper} style={cssVars} aria-hidden="true">
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th className={styles.thVenue} />
+            {times.map((t) => (
+              <th key={t} className={styles.thTime} />
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {Array.from({ length: SKELETON_ROWS }, (_, i) => (
+            <tr key={i} className={styles.row}>
+              <td className={styles.tdVenue}>
+                <span className={`${styles.shimmer} ${styles.shimmerLabel}`} />
+              </td>
+              {times.map((t) => (
+                <td key={t} className={styles.tdSlot}>
+                  <span className={`${styles.shimmer} ${styles.shimmerCell}`} />
+                </td>
               ))}
-            </div>
+            </tr>
           ))}
-        </div>
-      </div>
+        </tbody>
+      </table>
     </div>
   );
 }

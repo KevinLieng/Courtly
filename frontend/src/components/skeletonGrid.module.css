@@ -1,65 +1,66 @@
 @keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
 }
 
-.grid {
-  width: min(98vw, 1600px);
-  margin-top: 24px;
-  display: grid;
-  grid-template-columns: var(--label-width) minmax(0, 1fr);
-  column-gap: 8px;
-  align-items: start;
+.tableWrapper {
+  overflow-x: auto;
+  border-top: 1px solid var(--border);
+  background-color: var(--surface);
 }
 
-.block {
-  background: var(--unavailable-bg);
-  border-radius: 8px;
-  animation: pulse 1.4s ease-in-out infinite;
+.table {
+  width: max(100%, calc(var(--venue-col-width) + var(--time-count) * var(--time-col-min)));
+  border-collapse: collapse;
 }
 
-.labelColumn {
-  display: flex;
-  flex-direction: column;
+.thVenue {
+  width: var(--venue-col-width);
+  min-width: var(--venue-col-width);
+  height: 34px;
+  box-shadow: 1px 0 0 var(--border);
 }
 
-.labelSpacer {
-  height: 24px;
-  margin-bottom: 8px;
-}
-
-.labelBlock {
-  height: var(--row-height);
-  margin-bottom: var(--row-gap);
-  width: 70%;
-}
-
-.scrollArea {
-  overflow: hidden;
-}
-
-.timeGrid {
-  min-width: var(--time-grid-min-width);
-}
-
-.timeHeaderBlock {
-  height: 14px;
-  margin-bottom: 8px;
-  width: 100%;
+.thTime {
+  min-width: var(--time-col-min);
+  height: 34px;
 }
 
 .row {
-  display: grid;
-  grid-template-columns: repeat(var(--time-count), minmax(0, 1fr));
-  gap: var(--block-gap);
-  margin-bottom: var(--row-gap);
+  border-bottom: 1px solid var(--border);
 }
 
-.cell {
-  height: var(--row-height);
+.row:last-child {
+  border-bottom: none;
+}
+
+.tdVenue {
+  padding: 8px 10px 8px 16px;
+  vertical-align: middle;
+  background: var(--surface-subtle);
+  box-shadow: 1px 0 0 var(--border);
+}
+
+.tdSlot {
+  padding: 4px 3px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.shimmer {
+  display: block;
+  border-radius: 6px;
+  background: var(--empty-slot);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.shimmerLabel {
+  width: 70%;
+  height: 16px;
+}
+
+.shimmerCell {
+  width: 100%;
+  height: 38px;
+  border-radius: 5px;
 }

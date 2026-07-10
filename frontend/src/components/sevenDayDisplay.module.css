@@ -1,40 +1,106 @@
 .row {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
+  gap: 5px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  min-width: 0;
+}
+
+.row::-webkit-scrollbar {
+  display: none;
 }
 
 .day {
-  width: 120px;
-  height: 42px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  background: var(--surface);
-  color: var(--text-secondary);
-  font: inherit;
-  font-weight: 500;
-  font-size: 14px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+  min-width: 60px;
+  height: 46px;
+  padding: 4px 8px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  font: inherit;
+  gap: 1px;
+  flex-shrink: 0;
+  transition: border-color 0.12s ease, background-color 0.12s ease;
+  position: relative;
 }
 
-.day:hover {
-  border-color: var(--accent);
-  color: var(--text);
+.day:hover:not(.daySelected) {
+  border-color: var(--border-strong);
+  background: var(--surface-subtle);
 }
 
-.day:active {
-  transform: scale(0.97);
+/* Soft blue selection — tinted, not filled */
+.daySelected {
+  background: var(--accent-soft);
+  border-color: rgba(37, 99, 235, 0.4);
 }
 
-.daySelected,
-.daySelected:hover {
-  border-color: var(--accent);
+.dayTop {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.dayBottom {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.daySelected .dayTop,
+.daySelected .dayBottom {
+  color: var(--accent);
+}
+
+/* Today: accent dot below the date */
+.todayDot {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
   background: var(--accent);
-  color: #ffffff;
+  opacity: 0.5;
+}
+
+.daySelected .todayDot {
+  opacity: 0.7;
+}
+
+.dayCalendar {
+  min-width: 56px;
+  gap: 3px;
+}
+
+.calIcon {
+  width: 13px;
+  height: 13px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.daySelected .calIcon {
+  color: var(--accent);
+}
+
+.hiddenInput {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
 }

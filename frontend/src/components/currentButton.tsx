@@ -3,10 +3,12 @@ import styles from "./currentButton.module.css";
 
 type CurrentLocationButtonProps = {
   onLocationFound: (coords: { lat: number; lng: number }) => void;
+  locationActive?: boolean;
 };
 
 export default function CurrentLocationButton({
   onLocationFound,
+  locationActive,
 }: CurrentLocationButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -15,7 +17,7 @@ export default function CurrentLocationButton({
     setError("");
 
     if (!navigator.geolocation) {
-      setError("Location is not supported by this browser.");
+      setError("Location not supported.");
       return;
     }
 
@@ -24,7 +26,6 @@ export default function CurrentLocationButton({
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setLoading(false);
-
         onLocationFound({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
@@ -32,7 +33,7 @@ export default function CurrentLocationButton({
       },
       () => {
         setLoading(false);
-        setError("Could not get your location.");
+        setError("Could not get location.");
       }
     );
   }
@@ -43,9 +44,9 @@ export default function CurrentLocationButton({
         type="button"
         onClick={handleUseCurrentLocation}
         disabled={loading}
-        className={styles.button}
+        className={`${styles.button} ${locationActive ? styles.buttonActive : ""}`}
       >
-        {loading ? "Getting location..." : "Use current location"}
+        {loading ? "Locating..." : locationActive ? "Nearest first" : "Use my location"}
       </button>
 
       {error && <div className={styles.error}>{error}</div>}

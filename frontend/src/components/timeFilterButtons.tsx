@@ -2,19 +2,14 @@ import styles from "./timeFilterButtons.module.css";
 
 export type TimePeriod = "morning" | "afternoon" | "evening";
 
-const LABELS: Record<TimePeriod, string> = {
-  morning: "Morning",
-  afternoon: "Afternoon",
-  evening: "Evening",
-};
+type Option = { label: string; value: TimePeriod | null };
 
-const SUBLABELS: Record<TimePeriod, string> = {
-  morning: "7am – 11am",
-  afternoon: "12pm – 4pm",
-  evening: "5pm – 10pm",
-};
-
-const PERIODS: TimePeriod[] = ["morning", "afternoon", "evening"];
+const OPTIONS: Option[] = [
+  { label: "All day", value: null },
+  { label: "Morning", value: "morning" },
+  { label: "Afternoon", value: "afternoon" },
+  { label: "Evening", value: "evening" },
+];
 
 type Props = {
   active: TimePeriod | null;
@@ -23,19 +18,18 @@ type Props = {
 
 export default function TimeFilterButtons({ active, onChange }: Props) {
   return (
-    <div className={styles.row}>
-      {PERIODS.map((period) => {
-        const isActive = active === period;
+    <div className={styles.segment} role="group" aria-label="Time of day">
+      {OPTIONS.map(({ label, value }) => {
+        const isActive = active === value;
         return (
           <button
-            key={period}
+            key={label}
             type="button"
             aria-pressed={isActive}
-            className={`${styles.btn} ${isActive ? styles.btnActive : ""}`}
-            onClick={() => onChange(isActive ? null : period)}
+            className={`${styles.option} ${isActive ? styles.optionActive : ""}`}
+            onClick={() => onChange(value)}
           >
-            <span className={styles.label}>{LABELS[period]}</span>
-            <span className={styles.sub}>{SUBLABELS[period]}</span>
+            {label}
           </button>
         );
       })}

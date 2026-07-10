@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAvailability } from "./hooks/useAvailability";
-import DatePicker from "./components/datePicker";
 import SevenDayDisplay from "./components/sevenDayDisplay";
 import AvailabilityGrid from "./components/courtGrid";
 import SkeletonGrid from "./components/skeletonGrid";
@@ -19,8 +18,15 @@ function getLocalDateString(date = new Date()) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
-
   return `${year}-${month}-${day}`;
+}
+
+function formatSummaryDate(dateStr: string) {
+  const d = new Date(dateStr + "T00:00:00");
+  const weekday = d.toLocaleDateString("en-AU", { weekday: "long" });
+  const dayNum = d.getDate();
+  const month = d.toLocaleDateString("en-AU", { month: "long" });
+  return `${weekday}, ${dayNum} ${month}`;
 }
 
 export default function CourtAvailability() {
@@ -31,74 +37,85 @@ export default function CourtAvailability() {
   const maxDateString = getLocalDateString(maxDate);
 
   const [date, setDate] = useState(() => getLocalDateString());
-
-  const [userLocation, setUserLocation] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
-
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [activePeriod, setActivePeriod] = useState<TimePeriod | null>(null);
 
   const filteredTimes = activePeriod ? TIME_PERIODS[activePeriod] : allTimes;
 
-  const { locations, loading, invalidDate, error, status, retry } =
-    useAvailability(date, userLocation);
+  const { locations, loading, invalidDate, error, status, retry } = useAvailability(date, userLocation);
 
   const loaded = status !== "idle" && status !== "loading";
 
   const visibleLocations = locations.filter((location) =>
-    location.slots.some(
-      (slot) => slot.available && filteredTimes.includes(slot.time)
-    )
+    location.slots.some((slot) => slot.available && filteredTimes.includes(slot.time))
   );
 
   return (
     <div className={styles.page}>
-      <div className={styles.controls}>
-        <SevenDayDisplay date={date} setDate={setDate} />
+      <div className={styles.panel}>
 
-        <div className={styles.controlsRow}>
-          <DatePicker
-            date={date}
-            setDate={setDate}
-            minDate={today}
-            maxDate={maxDateString}
-          />
-          <CurrentLocationButton onLocationFound={setUserLocation} />
+        {/* Controls: two rows on the left, legend on the right */}
+        <div className={styles.controls}>
+          <div className={styles.controlRows}>
+            <div className={styles.controlRow1}>
+              <SevenDayDisplay date={date} setDate={setDate} minDate={today} maxDate={maxDateString} />
+            </div>
+            <div className={styles.controlRow2}>
+              <TimeFilterButtons active={activePeriod} onChange={setActivePeriod} />
+              <CurrentLocationButton onLocationFound={setUserLocation} locationActive={!!userLocation} />
+            </div>
+          </div>
+          <div className={styles.legend} aria-label="Availability legend">
+            <span className={styles.legendTitle}>Courts</span>
+            <div className={styles.legendItems}>
+              {([
+                { cls: styles.swatchLow,  label: "1–2" },
+                { cls: styles.swatchMid,  label: "3–5" },
+                { cls: styles.swatchHigh, label: "6+"  },
+              ] as const).map(({ cls, label }) => (
+                <span key={label} className={styles.legendItem}>
+                  <span className={`${styles.legendSwatch} ${cls}`} aria-hidden="true" />
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <TimeFilterButtons active={activePeriod} onChange={setActivePeriod} />
-      </div>
+        {/* Loading skeleton */}
+        {loading && <SkeletonGrid />}
 
-      {loading && <SkeletonGrid />}
-
-      {!loading && error && (
-        <div className={styles.stateError}>
-          <div>Failed to load availability.</div>
-          <button type="button" className={styles.retryButton} onClick={retry}>
-            Retry
-          </button>
-        </div>
-      )}
-
-      {!loading &&
-        loaded &&
-        !invalidDate &&
-        !error &&
-        visibleLocations.length === 0 && (
-          <div className={styles.state}>No courts available for this date.</div>
+        {/* Error */}
+        {!loading && error && (
+          <div className={styles.stateError}>
+            <p>Failed to load availability.</p>
+            <button type="button" className={styles.retryButton} onClick={retry}>
+              Retry
+            </button>
+          </div>
         )}
 
-      {!loading && visibleLocations.length > 0 && (
-        <>
-          <p className={styles.resultsSummary}>
-            {visibleLocations.length === 1
-              ? "1 location with courts available"
-              : `${visibleLocations.length} locations with courts available`}
-          </p>
-          <AvailabilityGrid date={date} times={filteredTimes} locations={visibleLocations} />
-        </>
-      )}
+        {/* Empty */}
+        {!loading && loaded && !invalidDate && !error && visibleLocations.length === 0 && (
+          <p className={styles.state}>No courts available for this date.</p>
+        )}
+
+        {/* Results */}
+        {!loading && visibleLocations.length > 0 && (
+          <>
+            <div className={styles.summaryRow}>
+              <div className={styles.summaryLeft}>
+                <span className={styles.venueCount}>
+                  {visibleLocations.length} {visibleLocations.length === 1 ? "venue" : "venues"} available
+                </span>
+                <span className={styles.summaryDate}>{formatSummaryDate(date)}</span>
+              </div>
+              <span className={styles.summaryHint}>Numbers = courts. Tap to book.</span>
+            </div>
+            <AvailabilityGrid date={date} times={filteredTimes} locations={visibleLocations} />
+          </>
+        )}
+      </div>
     </div>
   );
 }

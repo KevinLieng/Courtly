@@ -1,87 +1,51 @@
 @import "@fontsource-variable/geist";
 
 :root {
-  --bg: #fbfbfa;
+  --page-bg: #f5f7fa;
   --surface: #ffffff;
-  --border: #e4e2dd;
+  --surface-subtle: #f8fafc;
+  --border: #dce3ea;
+  --border-strong: #b8c4cf;
 
-  --text: #1c1b1a;
-  --text-secondary: #6b6864;
-  --text-muted: #a6a39d;
+  --text-primary: #172033;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
 
-  --accent: #2a5fd9;
-  --accent-hover: #1e4fbf;
-  --accent-bg: rgba(42, 95, 217, 0.08);
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --accent-hover: #1d4ed8;
 
-  --avail-1: #22c55e;
-  --avail-2: #16a34a;
-  --avail-3: #15803d;
-  --unavailable-bg: #f1f0ec;
-  --unavailable-text: #a6a39d;
+  /* Wimbledon-inspired grass-court greens — three-tier, all pass AA with white text */
+  --avail-low:  #527a55;   /* soft muted grass, 1–2 courts  — 4.9:1 */
+  --avail-mid:  #3a6e48;   /* balanced court green, 3–5     — 6.0:1 */
+  --avail-high: #2b5d3b;   /* deep Wimbledon green, 6+      — 7.7:1 */
 
-  --danger: #dc2626;
-  --danger-bg: rgba(220, 38, 38, 0.08);
+  --empty-slot: #f3f6f8;
+  --empty-slot-border: #e4e9ed;
 
-  --shadow: rgba(28, 27, 26, 0.06) 0 1px 2px, rgba(28, 27, 26, 0.04) 0 4px 10px;
-  --scroll-shadow-color: rgba(28, 27, 26, 0.12);
+  --danger: #c0392b;
+  --danger-bg: rgba(192, 57, 43, 0.08);
+
+  --scroll-shadow-color: rgba(23, 32, 51, 0.05);
 
   --sans: "Geist Variable", system-ui, "Segoe UI", Roboto, sans-serif;
-  --heading: "Geist Variable", system-ui, "Segoe UI", Roboto, sans-serif;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
+  font: 15px/1.5 var(--sans);
+  letter-spacing: 0.01em;
   font-variant-numeric: tabular-nums;
   color-scheme: light;
-  color: var(--text);
-  background: var(--bg);
+  color: var(--text-primary);
+  background: var(--page-bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #111110;
-    --surface: #181716;
-    --border: #2c2a27;
-
-    --text: #f0eeea;
-    --text-secondary: #9c9894;
-    --text-muted: #5c5956;
-
-    --accent: #4d7eff;
-    --accent-hover: #6691ff;
-    --accent-bg: rgba(77, 126, 255, 0.12);
-
-    --avail-1: #22c55e;
-    --avail-2: #16a34a;
-    --avail-3: #15803d;
-    --unavailable-bg: #1a1918;
-    --unavailable-text: #3d3b38;
-
-    --danger: #f87171;
-    --danger-bg: rgba(248, 113, 113, 0.1);
-
-    --shadow: rgba(0, 0, 0, 0.3) 0 1px 2px, rgba(0, 0, 0, 0.2) 0 4px 10px;
-    --scroll-shadow-color: rgba(0, 0, 0, 0.25);
-
-    color-scheme: dark;
-  }
 }
 
 #root {
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
 }
 
 body {
@@ -92,37 +56,14 @@ main {
   flex: 1;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text);
-}
-
 h1 {
-  font-size: 40px;
-  letter-spacing: -1px;
-  margin: 32px 0 4px;
-
-  @media (max-width: 1024px) {
-    font-size: 30px;
-    margin: 20px 0 4px;
-  }
-}
-
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-
-p {
   margin: 0;
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
 }
 
 *,
@@ -131,7 +72,12 @@ p {
   box-sizing: border-box;
 }
 
+p {
+  margin: 0;
+}
+
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+  border-radius: 3px;
 }

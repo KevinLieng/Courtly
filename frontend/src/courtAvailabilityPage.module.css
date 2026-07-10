@@ -1,69 +1,197 @@
 .page {
-  padding: 1rem 2rem 2rem;
+  padding: 8px 0 48px;
+
+  @media (max-width: 640px) {
+    padding: 4px 0 28px;
+  }
+}
+
+.panel {
+  width: min(1440px, calc(100% - 48px));
+  margin-inline: auto;
+  background: var(--surface);
+  border-radius: 12px;
+  overflow: clip;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(23, 32, 51, 0.06);
+
+  @media (max-width: 640px) {
+    width: calc(100% - 24px);
+    border-radius: 10px;
+  }
+}
+
+/* Controls: two rows on the left, legend on the right */
+.controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 20px 10px;
+  border-bottom: 1px solid var(--border);
+
+  @media (max-width: 640px) {
+    padding: 12px 14px 8px;
+    gap: 12px;
+  }
+}
+
+/* Column wrapper for the two control rows */
+.controlRows {
   display: flex;
   flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+
+  @media (max-width: 640px) {
+    gap: 8px;
+  }
+}
+
+/* Row 1: date buttons — SevenDayDisplay scrolls internally on narrow screens */
+.controlRow1 {
+  min-width: 0;
+}
+
+/* Row 2: time filter + location button */
+.controlRow2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    gap: 6px;
+  }
+}
+
+/* Legend — pushed to far right, hidden on mobile */
+.legend {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  align-self: center;
+  flex-shrink: 0;
+
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+.legendTitle {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.legendItems {
+  display: flex;
+  gap: 10px;
   align-items: center;
 }
 
-.controls {
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.legendSwatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.swatchLow  { background: var(--avail-low);  }
+.swatchMid  { background: var(--avail-mid);  }
+.swatchHigh { background: var(--avail-high); }
+
+/* Summary row */
+.summaryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px 7px;
+  gap: 10px;
+
+  @media (max-width: 640px) {
+    padding: 7px 14px 6px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+}
+
+.summaryLeft {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.venueCount {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.summaryDate {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.summaryHint {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+
+  @media (max-width: 640px) {
+    white-space: normal;
+  }
+}
+
+/* States */
+.state {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  border-top: 1px solid var(--border);
+}
+
+.stateError {
+  padding: 40px 20px;
+  text-align: center;
+  border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
-}
-
-.controlsRow {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.resultsSummary {
-  margin-top: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-align: center;
-}
-
-.state {
-  margin-top: 48px;
-  text-align: center;
-  color: var(--text-secondary);
-  font-weight: 700;
-  font-size: 18px;
-}
-
-.stateError {
-  composes: state;
   color: var(--danger);
-}
-
-.loadingState {
-  margin-top: 48px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  color: var(--text-secondary);
-  font-weight: 700;
+  font-size: 14px;
 }
 
 .retryButton {
-  margin-top: 12px;
-  height: 38px;
-  padding: 0 16px;
-  border-radius: 8px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   cursor: pointer;
   background: var(--surface);
-  color: var(--text);
+  color: var(--text-primary);
   font: inherit;
   font-weight: 500;
-  font-size: 14px;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  font-size: 13px;
+  transition: border-color 0.12s, color 0.12s;
 }
 
 .retryButton:hover {
