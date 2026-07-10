@@ -5,7 +5,15 @@ import SevenDayDisplay from "./components/sevenDayDisplay";
 import AvailabilityGrid from "./components/courtGrid";
 import SkeletonGrid from "./components/skeletonGrid";
 import CurrentLocationButton from "./components/currentButton";
+import TimeFilterButtons, { type TimePeriod } from "./components/timeFilterButtons";
+import { times as allTimes } from "./components/gridConstants";
 import styles from "./courtAvailabilityPage.module.css";
+
+const TIME_PERIODS: Record<TimePeriod, string[]> = {
+  morning:   ["07:00", "08:00", "09:00", "10:00", "11:00"],
+  afternoon: ["12:00", "13:00", "14:00", "15:00", "16:00"],
+  evening:   ["17:00", "18:00", "19:00", "20:00", "21:00", "22:00"],
+};
 
 function getLocalDateString(date = new Date()) {
   const year = date.getFullYear();
@@ -29,13 +37,19 @@ export default function CourtAvailability() {
     lng: number;
   } | null>(null);
 
+  const [activePeriod, setActivePeriod] = useState<TimePeriod | null>(null);
+
+  const filteredTimes = activePeriod ? TIME_PERIODS[activePeriod] : allTimes;
+
   const { locations, loading, invalidDate, error, status, retry } =
     useAvailability(date, userLocation);
 
   const loaded = status !== "idle" && status !== "loading";
 
   const visibleLocations = locations.filter((location) =>
-    location.slots.some((slot) => slot.available)
+    location.slots.some(
+      (slot) => slot.available && filteredTimes.includes(slot.time)
+    )
   );
 
   return (
@@ -52,6 +66,8 @@ export default function CourtAvailability() {
           />
           <CurrentLocationButton onLocationFound={setUserLocation} />
         </div>
+
+        <TimeFilterButtons active={activePeriod} onChange={setActivePeriod} />
       </div>
 
       {loading && <SkeletonGrid />}
@@ -80,7 +96,7 @@ export default function CourtAvailability() {
               ? "1 location with courts available"
               : `${visibleLocations.length} locations with courts available`}
           </p>
-          <AvailabilityGrid date={date} locations={visibleLocations} />
+          <AvailabilityGrid date={date} times={filteredTimes} locations={visibleLocations} />
         </>
       )}
     </div>

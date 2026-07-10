@@ -3,7 +3,6 @@ import LocationRow from "./locationRow";
 import type { Slot } from "../api/courtsApi";
 import styles from "./courtGrid.module.css";
 import {
-  times,
   LABEL_WIDTH,
   ROW_HEIGHT,
   ROW_GAP,
@@ -23,18 +22,20 @@ type LocationAvailability = {
 
 type AvailabilityGridProps = {
   date: string;
+  times: string[];
   locations: LocationAvailability[];
 };
 
 export default function AvailabilityGrid({
   date,
+  times,
   locations,
 }: AvailabilityGridProps) {
   const todayStr = new Date().toLocaleDateString("en-CA");
   const isToday = date === todayStr;
   const currentHour = new Date().getHours();
-  const currentTimeIndex =
-    isToday && currentHour >= 7 && currentHour <= 22 ? currentHour - 7 : -1;
+  const currentHourStr = `${String(currentHour).padStart(2, "0")}:00`;
+  const currentTimeIndex = isToday ? times.indexOf(currentHourStr) : -1;
 
   const gridStyle = {
     "--label-width": LABEL_WIDTH,
