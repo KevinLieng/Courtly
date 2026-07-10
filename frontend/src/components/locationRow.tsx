@@ -1,4 +1,5 @@
 import type { Slot } from "../api/courtsApi";
+import { computeAvailability } from "../utils/availabilityWindows";
 import styles from "./locationRow.module.css";
 
 type LocationData = {
@@ -13,6 +14,7 @@ type Props = {
   location: LocationData;
   times: string[];
   currentTimeIndex: number;
+  duration: 1 | 2;
 };
 
 function formatTime(time: string): string {
@@ -24,18 +26,8 @@ function formatTime(time: string): string {
   return `${hour - 12}:00 pm`;
 }
 
-export default function LocationRow({ location, times, currentTimeIndex }: Props) {
-  const availabilityByTime = location.slots.reduce(
-    (acc, slot) => {
-      if (!slot.available) return acc;
-      if (!acc[slot.time]) {
-        acc[slot.time] = { count: 0, bookingUrl: slot.bookingUrl };
-      }
-      acc[slot.time].count += 1;
-      return acc;
-    },
-    {} as Record<string, { count: number; bookingUrl: string }>
-  );
+export default function LocationRow({ location, times, currentTimeIndex, duration }: Props) {
+  const availabilityByTime = computeAvailability(location.slots, times, duration);
 
   return (
     <tr className={styles.row}>
@@ -58,6 +50,9 @@ export default function LocationRow({ location, times, currentTimeIndex }: Props
         const count = availability?.count ?? 0;
         const isAvailable = count > 0;
         const isCurrent = i === currentTimeIndex;
+        const slotLabel = duration === 2
+          ? `2-hour window starting ${formatTime(time)}`
+          : formatTime(time);
 
         return (
           <td
@@ -70,7 +65,7 @@ export default function LocationRow({ location, times, currentTimeIndex }: Props
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`${styles.slotAvail} ${count >= 6 ? styles.slotHigh : count >= 3 ? styles.slotMid : styles.slotLow}`}
-                aria-label={`${location.name}, ${formatTime(time)}, ${count} court${count === 1 ? "" : "s"} available`}
+                aria-label={`${location.name}, ${slotLabel}, ${count} court${count === 1 ? "" : "s"} available`}
               >
                 {count}
               </a>

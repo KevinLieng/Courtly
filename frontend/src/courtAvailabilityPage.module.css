@@ -48,7 +48,7 @@
   }
 }
 
-/* Row 1: date buttons — SevenDayDisplay scrolls internally on narrow screens */
+/* Row 1: date buttons */
 .controlRow1 {
   min-width: 0;
 }
@@ -65,19 +65,27 @@
   }
 }
 
-/* Legend — pushed to far right, hidden on mobile */
-.legend {
-  margin-left: auto;
+/* Right column: duration toggle (top) + legend (bottom) */
+.controlsRight {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 6px;
-  align-self: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-left: auto;
   flex-shrink: 0;
+  align-self: stretch;
 
   @media (max-width: 640px) {
     display: none;
   }
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
 }
 
 .legendTitle {

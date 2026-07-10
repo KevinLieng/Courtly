@@ -16,7 +16,8 @@
 }
 
 .table {
-  width: max(100%, calc(var(--venue-col-width) + var(--time-count) * var(--time-col-min)));
+  width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
 }
 
@@ -40,13 +41,13 @@
 }
 
 .thTime {
-  min-width: var(--time-col-min);
   padding: 7px 3px;
   text-align: center;
   font-size: 10px;
   font-weight: 500;
   color: var(--text-muted);
   white-space: nowrap;
+  overflow: hidden;
   position: relative;
   background: var(--surface-subtle);
   border-bottom: 1px solid var(--border);

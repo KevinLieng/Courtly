@@ -5,11 +5,13 @@ import AvailabilityGrid from "./components/courtGrid";
 import SkeletonGrid from "./components/skeletonGrid";
 import CurrentLocationButton from "./components/currentButton";
 import TimeFilterButtons, { type TimePeriod } from "./components/timeFilterButtons";
+import DurationToggle from "./components/durationToggle";
 import { times as allTimes } from "./components/gridConstants";
+import { nextHour } from "./utils/availabilityWindows";
 import styles from "./courtAvailabilityPage.module.css";
 
 const TIME_PERIODS: Record<TimePeriod, string[]> = {
-  morning:   ["07:00", "08:00", "09:00", "10:00", "11:00"],
+  morning:   ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00"],
   afternoon: ["12:00", "13:00", "14:00", "15:00", "16:00"],
   evening:   ["17:00", "18:00", "19:00", "20:00", "21:00", "22:00"],
 };
@@ -39,8 +41,13 @@ export default function CourtAvailability() {
   const [date, setDate] = useState(() => getLocalDateString());
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [activePeriod, setActivePeriod] = useState<TimePeriod | null>(null);
+  const [duration, setDuration] = useState<1 | 2>(1);
 
   const filteredTimes = activePeriod ? TIME_PERIODS[activePeriod] : allTimes;
+  const allTimesSet = new Set(allTimes);
+  const effectiveTimes = duration === 1
+    ? filteredTimes
+    : filteredTimes.filter(t => allTimesSet.has(nextHour(t)));
 
   const { locations, loading, invalidDate, error, status, retry } = useAvailability(date, userLocation);
 
@@ -54,7 +61,7 @@ export default function CourtAvailability() {
     <div className={styles.page}>
       <div className={styles.panel}>
 
-        {/* Controls: two rows on the left, legend on the right */}
+        {/* Controls: two rows on the left, duration toggle + legend on the right */}
         <div className={styles.controls}>
           <div className={styles.controlRows}>
             <div className={styles.controlRow1}>
@@ -65,19 +72,22 @@ export default function CourtAvailability() {
               <CurrentLocationButton onLocationFound={setUserLocation} locationActive={!!userLocation} />
             </div>
           </div>
-          <div className={styles.legend} aria-label="Availability legend">
-            <span className={styles.legendTitle}>Courts</span>
-            <div className={styles.legendItems}>
-              {([
-                { cls: styles.swatchLow,  label: "1–2" },
-                { cls: styles.swatchMid,  label: "3–5" },
-                { cls: styles.swatchHigh, label: "6+"  },
-              ] as const).map(({ cls, label }) => (
-                <span key={label} className={styles.legendItem}>
-                  <span className={`${styles.legendSwatch} ${cls}`} aria-hidden="true" />
-                  {label}
-                </span>
-              ))}
+          <div className={styles.controlsRight}>
+            <DurationToggle value={duration} onChange={setDuration} />
+            <div className={styles.legend} aria-label="Availability legend">
+              <span className={styles.legendTitle}>Courts</span>
+              <div className={styles.legendItems}>
+                {([
+                  { cls: styles.swatchLow,  label: "1–2" },
+                  { cls: styles.swatchMid,  label: "3–5" },
+                  { cls: styles.swatchHigh, label: "6+"  },
+                ] as const).map(({ cls, label }) => (
+                  <span key={label} className={styles.legendItem}>
+                    <span className={`${styles.legendSwatch} ${cls}`} aria-hidden="true" />
+                    {label}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -112,7 +122,7 @@ export default function CourtAvailability() {
               </div>
               <span className={styles.summaryHint}>Numbers = courts. Tap to book.</span>
             </div>
-            <AvailabilityGrid date={date} times={filteredTimes} locations={visibleLocations} />
+            <AvailabilityGrid date={date} times={effectiveTimes} locations={visibleLocations} duration={duration} />
           </>
         )}
       </div>
