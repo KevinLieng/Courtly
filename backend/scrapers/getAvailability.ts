@@ -355,6 +355,42 @@ const locations: LocationConfig[] = [
     lng: 151.270614,
     mapsUrl: "https://maps.app.goo.gl/4z1xR2QbPqFFp3fQ8",
   },
+  {
+    id: "latham-park-tc",
+    name: "Latham Park",
+    provider: "tennis-venues",
+    slug: "latham-park-tc",
+    lat: -33.934916,
+    lng: 151.248872,
+    mapsUrl: "https://maps.app.goo.gl/r2BmWUvjpkEycQDx7",
+  },
+  {
+    id: "vince-barclay-coaching-academy",
+    name: "Vince Barclay",
+    provider: "tennis-venues",
+    slug: "vince-barclay-coaching-academy",
+    lat: -33.767317,
+    lng: 151.115635,
+    mapsUrl: "https://maps.app.goo.gl/hsM4jv7NdwF8VZNG6",
+  },
+  {
+    id: "centre-court-tennis",
+    name: "Coleman Park",
+    provider: "tennis-venues",
+    slug: "centre-court-tennis",
+    lat: -33.916050,
+    lng: 150.975868,
+    mapsUrl: "https://maps.app.goo.gl/73QP7yxmaTuX2BLq5",
+  },
+  {
+    id: "snape-park-tc",
+    name: "Snape Park",
+    provider: "tennis-venues",
+    slug: "snape-park-tc",
+    lat: -33.934579,
+    lng: 151.235067,
+    mapsUrl: "https://maps.app.goo.gl/VZgvEQbJLwFB6wYFA",
+  },
 ];
 
 function getDistanceKm(
