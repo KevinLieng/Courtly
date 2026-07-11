@@ -13,6 +13,11 @@ export const PROVIDER_CAPABILITIES: Record<Provider, ProviderCapabilities> = {
   "tennis-venues": { baseSlotMinutes: 30, allowedStartIntervalMinutes: 30 },
 };
 
+export function toMinutes(time: string): number {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+}
+
 export function addMinutes(time: string, minutes: number): string {
   const [h, m] = time.split(":").map(Number);
   const total = h * 60 + m + minutes;

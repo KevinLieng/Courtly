@@ -10,8 +10,8 @@ import DistanceFilter from "./components/distanceFilter";
 import TimeFilterButtons, { type TimePeriod } from "./components/timeFilterButtons";
 import DurationToggle, { type Duration } from "./components/durationToggle";
 import SwipeHint from "./components/swipeHint";
-import { times as allTimes } from "./components/gridConstants";
-import { floorToHalfHour } from "./utils/availabilityWindows";
+import { times as allTimes, LATEST_POSSIBLE_SLOT_TIME } from "./components/gridConstants";
+import { floorToHalfHour, toMinutes } from "./utils/availabilityWindows";
 import styles from "./courtAvailabilityPage.module.css";
 
 function timesInHourRange(times: string[], startHour: number, endHourExclusive: number) {
@@ -63,9 +63,16 @@ export default function CourtAvailability() {
 
   // For today, hide start times already in the past — e.g. at 2:10pm only
   // "14:00" onward remains selectable.
-  const filteredTimes = date === today
+  const dateFilteredTimes = date === today
     ? periodTimes.filter((t) => t >= floorToHalfHour(new Date()))
     : periodTimes;
+
+  // Trim trailing start times whose window can never have real data for
+  // any venue at the selected duration — the last checkpoint it would
+  // need to verify (start + duration - 30min) must stay within the
+  // latest slot time any venue actually has.
+  const cutoffMinutes = toMinutes(LATEST_POSSIBLE_SLOT_TIME) - duration * 60 + 30;
+  const filteredTimes = dateFilteredTimes.filter((t) => toMinutes(t) <= cutoffMinutes);
 
   const { locations, loading, invalidDate, error, status, retry } = useAvailability(date, userLocation);
 

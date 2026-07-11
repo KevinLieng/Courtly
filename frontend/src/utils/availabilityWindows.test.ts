@@ -4,6 +4,7 @@ import {
   getAvailableCourtsForWindow,
   addMinutes,
   floorToHalfHour,
+  toMinutes,
   PROVIDER_CAPABILITIES,
 } from "./availabilityWindows";
 import type { Slot } from "../api/courtsApi";
@@ -21,6 +22,14 @@ function toCourtsByTime(slots: Slot[]): Map<string, Map<number, string>> {
   }
   return map;
 }
+
+describe("toMinutes", () => {
+  it("converts a time string to minutes since midnight", () => {
+    expect(toMinutes("00:00")).toBe(0);
+    expect(toMinutes("09:30")).toBe(570);
+    expect(toMinutes("22:30")).toBe(1350);
+  });
+});
 
 describe("addMinutes", () => {
   it("adds minutes within the hour", () => {
