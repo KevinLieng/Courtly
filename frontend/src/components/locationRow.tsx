@@ -1,5 +1,6 @@
 import type { Provider, Slot } from "../api/courtsApi";
 import { computeAvailability, PROVIDER_CAPABILITIES } from "../utils/availabilityWindows";
+import { formatDistanceKm } from "../utils/distance";
 import { formatFullWindowLabel } from "./courtGrid";
 import AvailableSlotLink from "./availableSlotLink";
 import styles from "./locationRow.module.css";
@@ -37,7 +38,7 @@ export default function LocationRow({ location, times, currentTimeIndex, duratio
           {location.name}
         </a>
         {location.distance !== undefined && (
-          <span className={styles.distance}>{location.distance.toFixed(1)} km</span>
+          <span className={styles.distance}>{formatDistanceKm(location.distance)}</span>
         )}
       </td>
 
