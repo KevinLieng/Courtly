@@ -104,7 +104,7 @@ const locations: LocationConfig[] = [
   },
   {
     id: "eastside-tennis-centre",
-    name: "Eastside Tennis Centre",
+    name: "Eastside",
     provider: "tennis-venues",
     slug: "eastside-tennis-centre",
     lat: -33.922246,
@@ -113,12 +113,30 @@ const locations: LocationConfig[] = [
   },
   {
     id: "panania-tennis-centre",
-    name: "Panania Tennis Centre",
+    name: "Panania",
     provider: "tennis-venues",
     slug: "panania-tennis-centre",
     lat: -33.953464,
     lng: 150.988624,
     mapsUrl: "https://maps.app.goo.gl/bh2R1axw2yUhT9YS6",
+  },
+  {
+    id: "moxon-sports-club",
+    name: "Moxon",
+    provider: "tennis-venues",
+    slug: "moxon-sports-club",
+    lat: -33.938536,
+    lng: 151.043343,
+    mapsUrl: "https://maps.app.goo.gl/wD8Jqd4NbEpX2wJ26",
+  },
+  {
+    id: "smith-park-tc",
+    name: "Smith Park",
+    provider: "tennis-venues",
+    slug: "smith-park-tc",
+    lat: -33.959243,
+    lng: 150.990047,
+    mapsUrl: "https://maps.app.goo.gl/aEQcEmZjpKU5ryjG8",
   },
 ];
 
