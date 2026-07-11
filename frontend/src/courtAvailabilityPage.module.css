@@ -109,6 +109,15 @@
   }
 }
 
+/* Distance filter: only rendered once a location is known, sits right
+   after the location button on both desktop and mobile. */
+.distanceFilterWrap {
+  @media (max-width: 640px) {
+    order: 4;
+    flex: 0 0 auto;
+  }
+}
+
 /* Right column: duration toggle (top) + legend (bottom) */
 .controlsRight {
   display: flex;
@@ -129,7 +138,7 @@
 
 .durationWrap {
   @media (max-width: 640px) {
-    order: 4;
+    order: 5;
     flex: 0 0 auto;
     display: flex;
     margin-left: auto;

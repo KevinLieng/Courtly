@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useAvailability } from "./hooks/useAvailability";
+import { useUserLocation } from "./hooks/useUserLocation";
+import { useDistanceFilter } from "./hooks/useDistanceFilter";
 import SevenDayDisplay from "./components/sevenDayDisplay";
 import AvailabilityGrid from "./components/courtGrid";
 import SkeletonGrid from "./components/skeletonGrid";
 import CurrentLocationButton from "./components/currentButton";
+import DistanceFilter from "./components/distanceFilter";
 import TimeFilterButtons, { type TimePeriod } from "./components/timeFilterButtons";
 import DurationToggle, { type Duration } from "./components/durationToggle";
 import SwipeHint from "./components/swipeHint";
@@ -47,7 +50,8 @@ export default function CourtAvailability() {
   const maxDateString = getLocalDateString(maxDate);
 
   const [date, setDate] = useState(() => getLocalDateString());
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [userLocation, setUserLocation] = useUserLocation();
+  const [distanceFilter, setDistanceFilter] = useDistanceFilter();
   const [activePeriod, setActivePeriod] = useState<TimePeriod | null>(null);
   const [duration, setDuration] = useState<Duration>(1);
 
@@ -67,9 +71,26 @@ export default function CourtAvailability() {
 
   const loaded = status !== "idle" && status !== "loading";
 
-  const visibleLocations = locations.filter((location) =>
-    location.slots.some((slot) => slot.available && filteredTimes.includes(slot.time))
+  // Stage 1: existing availability rule — a venue must have at least one
+  // available slot within the selected time-of-day window. This already
+  // hides invalid-date venues too, since their slots array is empty.
+  const availableLocations = useMemo(
+    () =>
+      locations.filter((location) =>
+        location.slots.some((slot) => slot.available && filteredTimes.includes(slot.time))
+      ),
+    [locations, filteredTimes]
   );
+
+  // Stage 2: distance radius filter. Backend already returns venues
+  // nearest-first when a location is known (and pushes distance-less
+  // venues last), so no extra sorting is needed here — just filtering.
+  const distanceFilteredLocations = useMemo(() => {
+    if (!userLocation || distanceFilter === "any") return availableLocations;
+    return availableLocations.filter(
+      (location) => location.distance !== undefined && location.distance <= distanceFilter
+    );
+  }, [availableLocations, userLocation, distanceFilter]);
 
   return (
     <div className={styles.page}>
@@ -88,6 +109,11 @@ export default function CourtAvailability() {
               <div className={styles.locationWrap}>
                 <CurrentLocationButton onLocationFound={setUserLocation} locationActive={!!userLocation} />
               </div>
+              {userLocation && (
+                <div className={styles.distanceFilterWrap}>
+                  <DistanceFilter value={distanceFilter} onChange={setDistanceFilter} />
+                </div>
+              )}
             </div>
           </div>
           <div className={styles.controlsRight}>
@@ -125,18 +151,33 @@ export default function CourtAvailability() {
           </div>
         )}
 
-        {/* Empty */}
-        {!loading && loaded && !invalidDate && !error && visibleLocations.length === 0 && (
+        {/* Empty: no availability at all for this date */}
+        {!loading && loaded && !invalidDate && !error && availableLocations.length === 0 && (
           <p className={styles.state}>No courts available for this date.</p>
         )}
 
+        {/* Empty: availability exists, but none within the selected distance */}
+        {!loading && loaded && !invalidDate && !error &&
+          availableLocations.length > 0 && distanceFilteredLocations.length === 0 && (
+            <div className={styles.stateError}>
+              <p>No available courts found within this distance.</p>
+              <button
+                type="button"
+                className={styles.retryButton}
+                onClick={() => setDistanceFilter("any")}
+              >
+                Show any distance
+              </button>
+            </div>
+          )}
+
         {/* Results */}
-        {!loading && visibleLocations.length > 0 && (
+        {!loading && distanceFilteredLocations.length > 0 && (
           <>
             <div className={styles.summaryRow}>
               <div className={styles.summaryLeft}>
                 <span className={styles.venueCount}>
-                  {visibleLocations.length} {visibleLocations.length === 1 ? "venue" : "venues"} available
+                  {distanceFilteredLocations.length} {distanceFilteredLocations.length === 1 ? "venue" : "venues"} available
                 </span>
                 <span className={styles.summaryDate}>{formatSummaryDate(date)}</span>
               </div>
@@ -146,7 +187,7 @@ export default function CourtAvailability() {
             <AvailabilityGrid
               date={date}
               times={filteredTimes}
-              locations={visibleLocations}
+              locations={distanceFilteredLocations}
               duration={duration}
               showRangeLabels={activePeriod !== null}
             />

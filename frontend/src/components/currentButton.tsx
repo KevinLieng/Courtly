@@ -6,6 +6,19 @@ type CurrentLocationButtonProps = {
   locationActive?: boolean;
 };
 
+function describeGeolocationError(error: GeolocationPositionError): string {
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      return "Location permission denied.";
+    case error.TIMEOUT:
+      return "Location request timed out.";
+    case error.POSITION_UNAVAILABLE:
+      return "Location unavailable.";
+    default:
+      return "Could not get location.";
+  }
+}
+
 export default function CurrentLocationButton({
   onLocationFound,
   locationActive,
@@ -31,10 +44,11 @@ export default function CurrentLocationButton({
           lng: position.coords.longitude,
         });
       },
-      () => {
+      (err) => {
         setLoading(false);
-        setError("Could not get location.");
-      }
+        setError(describeGeolocationError(err));
+      },
+      { timeout: 10000, maximumAge: 5 * 60 * 1000 }
     );
   }
 
