@@ -29,7 +29,7 @@ export default function App() {
         <CourtAvailability />
       </main>
       <footer className={styles.footer}>
-        Court availability sourced from City of Sydney and Centennial Parklands.
+        Court availability sourced from City of Sydney, Centennial Parklands & TennisVenues.com.au.
       </footer>
     </>
   );
