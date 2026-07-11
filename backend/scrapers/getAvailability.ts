@@ -1,14 +1,21 @@
 import { cityCommunityScraper } from "./cityCommunityScraper";
 import { parklandsScraper } from "./parklandsScraper";
+import { tennisVenuesScraper } from "./tennisVenuesScraper";
 import type { AvailabilityResponse } from "./slotTypes";
 
-type Provider = "city-community" | "parklands";
+type Provider = "city-community" | "parklands" | "tennis-venues";
 
-type LocationConfig = {
+type LocationConfig = (
+  | { provider: "city-community" | "parklands"; providerLocationId: number }
+  | {
+      provider: "tennis-venues";
+      slug: string;
+      venueId?: string;
+      isTennisCourt?: (courtName: string) => boolean;
+    }
+) & {
   id: string; // your app's clean ID
   name: string; // display name
-  provider: Provider;
-  providerLocationId: number; // the ugly ID used in the booking URL
   lat: number;
   lng: number;
   mapsUrl: string;
@@ -95,6 +102,24 @@ const locations: LocationConfig[] = [
     lng: 151.2199788257296,
     mapsUrl: "https://maps.app.goo.gl/sT3ixhX1MCTr4UYL8",
   },
+  {
+    id: "eastside-tennis-centre",
+    name: "Eastside Tennis Centre",
+    provider: "tennis-venues",
+    slug: "eastside-tennis-centre",
+    lat: -33.922246,
+    lng: 151.222015,
+    mapsUrl: "https://maps.app.goo.gl/HHTVdLaMAT17fykH7",
+  },
+  {
+    id: "panania-tennis-centre",
+    name: "Panania Tennis Centre",
+    provider: "tennis-venues",
+    slug: "panania-tennis-centre",
+    lat: -33.953464,
+    lng: 150.988624,
+    mapsUrl: "https://maps.app.goo.gl/bh2R1axw2yUhT9YS6",
+  },
 ];
 
 function getDistanceKm(
@@ -146,6 +171,27 @@ async function scrapeLocation(
 
     if (location.provider === "parklands") {
       const data = await parklandsScraper(location.providerLocationId, date);
+      const distance = userLocation
+        ? getDistanceKm(userLocation, { lat: location.lat, lng: location.lng })
+        : undefined;
+      return {
+        id: location.id,
+        name: location.name,
+        provider: location.provider,
+        lat: location.lat,
+        lng: location.lng,
+        mapsUrl: location.mapsUrl,
+        status: data.status,
+        slots: data.slots,
+        distance,
+      };
+    }
+
+    if (location.provider === "tennis-venues") {
+      const data = await tennisVenuesScraper(
+        { slug: location.slug, venueId: location.venueId, isTennisCourt: location.isTennisCourt },
+        date
+      );
       const distance = userLocation
         ? getDistanceKm(userLocation, { lat: location.lat, lng: location.lng })
         : undefined;

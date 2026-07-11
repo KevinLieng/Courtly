@@ -9,7 +9,7 @@ export type Slot = {
 
 export type AvailabilityStatus = "ok" | "invalid-date" | "error";
 
-export type Provider = "city-community" | "parklands";
+export type Provider = "city-community" | "parklands" | "tennis-venues";
 
 export type LocationAvailability = {
   id: string;

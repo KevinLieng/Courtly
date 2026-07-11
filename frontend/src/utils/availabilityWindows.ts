@@ -10,6 +10,7 @@ export type ProviderCapabilities = {
 export const PROVIDER_CAPABILITIES: Record<Provider, ProviderCapabilities> = {
   "city-community": { baseSlotMinutes: 60, allowedStartIntervalMinutes: 60 },
   "parklands": { baseSlotMinutes: 30, allowedStartIntervalMinutes: 30 },
+  "tennis-venues": { baseSlotMinutes: 30, allowedStartIntervalMinutes: 30 },
 };
 
 export function addMinutes(time: string, minutes: number): string {
