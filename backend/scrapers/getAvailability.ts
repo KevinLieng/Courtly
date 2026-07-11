@@ -12,6 +12,7 @@ type LocationConfig = (
       slug: string;
       venueId?: string;
       isTennisCourt?: (courtName: string) => boolean;
+      maxAdvanceDays?: number;
     }
 ) & {
   id: string; // your app's clean ID
@@ -138,6 +139,36 @@ const locations: LocationConfig[] = [
     lng: 150.990047,
     mapsUrl: "https://maps.app.goo.gl/aEQcEmZjpKU5ryjG8",
   },
+  {
+    id: "bexley-tennis-courts",
+    name: "Bexley",
+    provider: "tennis-venues",
+    slug: "bexley-tennis-courts",
+    maxAdvanceDays: 30,
+    lat: -33.944678,
+    lng: 151.121344,
+    mapsUrl: "https://maps.app.goo.gl/rmUoVkFgV3B2GVBZ9",
+  },
+  {
+    id: "rockdale-tc",
+    name: "Rockdale",
+    provider: "tennis-venues",
+    slug: "rockdale-tc",
+    maxAdvanceDays: 30,
+    lat: -33.956957,
+    lng: 151.141519,
+    mapsUrl: "https://maps.app.goo.gl/vNjGBiWXwCptLVX58",
+  },
+  {
+    id: "meadowbank-park-tc",
+    name: "Meadowbank Park",
+    provider: "tennis-venues",
+    slug: "meadowbank-park-tc",
+    maxAdvanceDays: 30,
+    lat: -33.815511,
+    lng: 151.083520,
+    mapsUrl: "https://maps.app.goo.gl/YDB3sQdMzwu8aCpu6",
+  },
 ];
 
 function getDistanceKm(
@@ -207,7 +238,12 @@ async function scrapeLocation(
 
     if (location.provider === "tennis-venues") {
       const data = await tennisVenuesScraper(
-        { slug: location.slug, venueId: location.venueId, isTennisCourt: location.isTennisCourt },
+        {
+          slug: location.slug,
+          venueId: location.venueId,
+          isTennisCourt: location.isTennisCourt,
+          maxAdvanceDays: location.maxAdvanceDays,
+        },
         date
       );
       const distance = userLocation
