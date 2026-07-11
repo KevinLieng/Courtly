@@ -5,16 +5,23 @@ import AvailabilityGrid from "./components/courtGrid";
 import SkeletonGrid from "./components/skeletonGrid";
 import CurrentLocationButton from "./components/currentButton";
 import TimeFilterButtons, { type TimePeriod } from "./components/timeFilterButtons";
-import DurationToggle from "./components/durationToggle";
+import DurationToggle, { type Duration } from "./components/durationToggle";
 import SwipeHint from "./components/swipeHint";
 import { times as allTimes } from "./components/gridConstants";
-import { nextHour } from "./utils/availabilityWindows";
+import { floorToHalfHour } from "./utils/availabilityWindows";
 import styles from "./courtAvailabilityPage.module.css";
 
+function timesInHourRange(times: string[], startHour: number, endHourExclusive: number) {
+  return times.filter((t) => {
+    const h = parseInt(t.split(":")[0], 10);
+    return h >= startHour && h < endHourExclusive;
+  });
+}
+
 const TIME_PERIODS: Record<TimePeriod, string[]> = {
-  morning:   ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00"],
-  afternoon: ["12:00", "13:00", "14:00", "15:00", "16:00"],
-  evening:   ["17:00", "18:00", "19:00", "20:00", "21:00", "22:00"],
+  morning: timesInHourRange(allTimes, 6, 12),
+  afternoon: timesInHourRange(allTimes, 12, 17),
+  evening: timesInHourRange(allTimes, 17, 23),
 };
 
 function getLocalDateString(date = new Date()) {
@@ -42,13 +49,19 @@ export default function CourtAvailability() {
   const [date, setDate] = useState(() => getLocalDateString());
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [activePeriod, setActivePeriod] = useState<TimePeriod | null>(null);
-  const [duration, setDuration] = useState<1 | 2>(1);
+  const [duration, setDuration] = useState<Duration>(1);
 
-  const filteredTimes = activePeriod ? TIME_PERIODS[activePeriod] : allTimes;
-  const allTimesSet = new Set(allTimes);
-  const effectiveTimes = duration === 1
-    ? filteredTimes
-    : filteredTimes.filter(t => allTimesSet.has(nextHour(t)));
+  // Every half-hour column in the (time-of-day-filtered) grid is rendered
+  // as a start time; whether a given window actually fits is decided by
+  // computeAvailability looking at the real underlying slots, not by
+  // whether the window's end happens to also be a selectable column.
+  const periodTimes = activePeriod ? TIME_PERIODS[activePeriod] : allTimes;
+
+  // For today, hide start times already in the past — e.g. at 2:10pm only
+  // "14:00" onward remains selectable.
+  const filteredTimes = date === today
+    ? periodTimes.filter((t) => t >= floorToHalfHour(new Date()))
+    : periodTimes;
 
   const { locations, loading, invalidDate, error, status, retry } = useAvailability(date, userLocation);
 
@@ -130,7 +143,13 @@ export default function CourtAvailability() {
               <span className={styles.summaryHint}>Numbers = courts. Tap to book.</span>
             </div>
             <SwipeHint />
-            <AvailabilityGrid date={date} times={effectiveTimes} locations={visibleLocations} duration={duration} />
+            <AvailabilityGrid
+              date={date}
+              times={filteredTimes}
+              locations={visibleLocations}
+              duration={duration}
+              showRangeLabels={activePeriod !== null}
+            />
           </>
         )}
       </div>
