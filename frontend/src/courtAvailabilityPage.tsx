@@ -105,23 +105,23 @@ export default function CourtAvailability() {
     <div className={styles.page}>
       <div className={styles.panel}>
 
-        {/* Controls: two rows on the left, duration toggle + legend on the right */}
+        {/* Controls: a two-row grid — date/duration on top, filters/legend
+            below. Both rows share one grid so the right-hand column
+            (Duration, Legend) lines up on the same edge in both rows. */}
         <div className={styles.controls}>
-          <div className={styles.controlRows}>
-            <div className={styles.controlRow1}>
+          <div className={styles.controlsInner}>
+            <div className={styles.rowLeft}>
               <SevenDayDisplay date={date} setDate={setDate} minDate={today} maxDate={maxDateString} />
             </div>
-            <div className={styles.controlRow2}>
-              <div className={styles.timeFilterWrap}>
-                <TimeFilterButtons active={activePeriod} onChange={setActivePeriod} />
-              </div>
-              <div className={styles.locationWrap}>
-                <CurrentLocationButton onLocationFound={setUserLocation} locationActive={!!userLocation} />
-              </div>
+            <div className={styles.rowRight}>
+              <DurationToggle value={duration} onChange={setDuration} />
+            </div>
+
+            <div className={styles.rowLeft}>
+              <TimeFilterButtons active={activePeriod} onChange={setActivePeriod} />
+              <CurrentLocationButton onLocationFound={setUserLocation} locationActive={!!userLocation} />
               {userLocation && (
-                <div className={styles.distanceFilterWrap}>
-                  <DistanceFilter value={distanceFilter} onChange={setDistanceFilter} />
-                </div>
+                <DistanceFilter value={distanceFilter} onChange={setDistanceFilter} />
               )}
               <button
                 type="button"
@@ -132,24 +132,21 @@ export default function CourtAvailability() {
                 {loading ? "Refreshing…" : "Refresh"}
               </button>
             </div>
-          </div>
-          <div className={styles.controlsRight}>
-            <div className={styles.durationWrap}>
-              <DurationToggle value={duration} onChange={setDuration} />
-            </div>
-            <div className={styles.legend} aria-label="Availability legend">
-              <span className={styles.legendTitle}>Courts</span>
-              <div className={styles.legendItems}>
-                {([
-                  { cls: styles.swatchLow,  label: "1–2" },
-                  { cls: styles.swatchMid,  label: "3–5" },
-                  { cls: styles.swatchHigh, label: "6+"  },
-                ] as const).map(({ cls, label }) => (
-                  <span key={label} className={styles.legendItem}>
-                    <span className={`${styles.legendSwatch} ${cls}`} aria-hidden="true" />
-                    {label}
-                  </span>
-                ))}
+            <div className={styles.rowRight}>
+              <div className={styles.legend} aria-label="Availability legend">
+                <span className={styles.legendTitle}>Courts</span>
+                <div className={styles.legendItems}>
+                  {([
+                    { cls: styles.swatchLow,  label: "1–2" },
+                    { cls: styles.swatchMid,  label: "3–5" },
+                    { cls: styles.swatchHigh, label: "6+"  },
+                  ] as const).map(({ cls, label }) => (
+                    <span key={label} className={styles.legendItem}>
+                      <span className={`${styles.legendSwatch} ${cls}`} aria-hidden="true" />
+                      {label}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
