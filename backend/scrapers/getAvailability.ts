@@ -22,7 +22,7 @@ type LocationConfig = (
   mapsUrl: string;
 };
 
-type LocationAvailability = {
+export type LocationAvailability = {
   id: string;
   name: string;
   provider: Provider;
@@ -34,7 +34,7 @@ type LocationAvailability = {
   slots: AvailabilityResponse["slots"];
 };
 
-type GetAvailabilityResponse = {
+export type GetAvailabilityResponse = {
   date: string;
   locations: LocationAvailability[];
 };
@@ -414,19 +414,12 @@ function getDistanceKm(
 
 async function scrapeLocation(
   location: LocationConfig,
-  date: string,
-  userLocation?: { lat: number; lng: number }
+  date: string
 ): Promise<LocationAvailability> {
   try {
     if (location.provider === "city-community") {
       const data = await cityCommunityScraper(location.providerLocationId, date);
 
-       const distance = userLocation
-      ? getDistanceKm(userLocation, {
-          lat: location.lat,
-          lng: location.lng,
-        })
-      : undefined;
       return {
         id: location.id,
         name: location.name,
@@ -436,15 +429,12 @@ async function scrapeLocation(
         mapsUrl: location.mapsUrl,
         status: data.status,
         slots: data.slots,
-        distance,
       };
     }
 
     if (location.provider === "parklands") {
       const data = await parklandsScraper(location.providerLocationId, date);
-      const distance = userLocation
-        ? getDistanceKm(userLocation, { lat: location.lat, lng: location.lng })
-        : undefined;
+
       return {
         id: location.id,
         name: location.name,
@@ -454,7 +444,6 @@ async function scrapeLocation(
         mapsUrl: location.mapsUrl,
         status: data.status,
         slots: data.slots,
-        distance,
       };
     }
 
@@ -468,9 +457,7 @@ async function scrapeLocation(
         },
         date
       );
-      const distance = userLocation
-        ? getDistanceKm(userLocation, { lat: location.lat, lng: location.lng })
-        : undefined;
+
       return {
         id: location.id,
         name: location.name,
@@ -480,7 +467,6 @@ async function scrapeLocation(
         mapsUrl: location.mapsUrl,
         status: data.status,
         slots: data.slots,
-        distance,
       };
     }
 
@@ -510,19 +496,42 @@ async function scrapeLocation(
   }
 }
 
+// The raw scrape result for a date, with no user-location-dependent fields
+// filled in (distance is always undefined here). This is the shape that
+// gets cached, since it's the same for every user regardless of where
+// they're browsing from.
+export async function scrapeAllLocations(
+  date: string
+): Promise<LocationAvailability[]> {
+  return Promise.all(
+    locations.map((location) => scrapeLocation(location, date))
+  );
+}
+
+// Fills in per-user distance and sorts nearest-first. Cheap enough to run
+// on every request against either freshly-scraped or cached raw results.
+export function withUserLocation(
+  results: LocationAvailability[],
+  userLocation?: { lat: number; lng: number }
+): LocationAvailability[] {
+  if (!userLocation) return results;
+
+  const withDistance = results.map((result) => ({
+    ...result,
+    distance: getDistanceKm(userLocation, { lat: result.lat, lng: result.lng }),
+  }));
+
+  return withDistance.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+}
+
 export async function getAvailability(
   date: string,
   userLocation?: { lat: number; lng: number }
 ): Promise<GetAvailabilityResponse> {
-  const results = await Promise.all(
-    locations.map((location) => scrapeLocation(location, date, userLocation))
-  );
+  const results = await scrapeAllLocations(date);
 
-const sortedResults = userLocation
-    ? results.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity))
-    : results;
   return {
     date,
-    locations: sortedResults,
+    locations: withUserLocation(results, userLocation),
   };
 }

@@ -1,6 +1,7 @@
+import "dotenv/config";
 import express, { Request, Response } from "express";
 import cors from "cors";
-import { getAvailability } from "./scrapers/getAvailability";
+import { getAvailabilityCached } from "./db/availabilityCache";
 
 const app = express();
 const PORT = 3000;
@@ -26,7 +27,7 @@ app.get("/api/availability", async (req: Request, res: Response) => {
         ? { lat, lng }
         : undefined;
         
-    const data = await getAvailability(date, userLocation);
+    const data = await getAvailabilityCached(date, userLocation);
 
     return res.json(data);
   } catch (err) {

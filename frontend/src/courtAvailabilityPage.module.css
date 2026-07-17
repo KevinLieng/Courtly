@@ -274,3 +274,27 @@
   border-color: var(--danger);
   color: var(--danger);
 }
+
+.refreshButton {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text-primary);
+  font: inherit;
+  font-weight: 500;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: border-color 0.12s, color 0.12s;
+}
+
+.refreshButton:hover:not(:disabled) {
+  border-color: var(--text-primary);
+}
+
+.refreshButton:disabled {
+  cursor: default;
+  opacity: 0.6;
+}

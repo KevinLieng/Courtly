@@ -74,7 +74,7 @@ export default function CourtAvailability() {
   const cutoffMinutes = toMinutes(LATEST_POSSIBLE_SLOT_TIME) - duration * 60 + 30;
   const filteredTimes = dateFilteredTimes.filter((t) => toMinutes(t) <= cutoffMinutes);
 
-  const { locations, loading, invalidDate, error, status, retry } = useAvailability(date, userLocation);
+  const { locations, loading, invalidDate, error, status, retry, refresh } = useAvailability(date, userLocation);
 
   const loaded = status !== "idle" && status !== "loading";
 
@@ -121,6 +121,14 @@ export default function CourtAvailability() {
                   <DistanceFilter value={distanceFilter} onChange={setDistanceFilter} />
                 </div>
               )}
+              <button
+                type="button"
+                className={styles.refreshButton}
+                onClick={refresh}
+                disabled={loading}
+              >
+                {loading ? "Refreshing…" : "Refresh"}
+              </button>
             </div>
           </div>
           <div className={styles.controlsRight}>

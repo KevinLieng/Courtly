@@ -78,5 +78,8 @@ export function useAvailability(
     error: status === "error",
     status,
     retry: () => setRetryCount((count) => count + 1),
+    // Same underlying re-fetch as retry — the backend decides whether this
+    // actually re-scrapes (data >15min old) or just re-serves the cache.
+    refresh: () => setRetryCount((count) => count + 1),
   };
 }
