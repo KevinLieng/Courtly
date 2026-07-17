@@ -21,161 +21,93 @@
   }
 }
 
-/* Controls: two rows on the left, legend on the right */
+/* Controls: outer chrome only — the grid layout itself lives in
+   .controlsInner so it can be width-constrained independently of this
+   wrapper's padding/border. */
 .controls {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 24px;
   padding: 14px 20px 10px;
   border-bottom: 1px solid var(--border);
 
   @media (max-width: 640px) {
     padding: 12px;
-    row-gap: 8px;
-    column-gap: 10px;
-    flex-wrap: wrap;
     margin: 10px;
     background: var(--surface-subtle);
     border-radius: 12px;
+    border-bottom: none;
   }
 }
 
-/* Column wrapper for the two control rows */
-.controlRows {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 0;
+/* Shared 2-column grid for both control rows. Using one grid (not two
+   independent ones) is what guarantees the right-hand column (Duration,
+   Legend) shares the exact same column width/right edge in both rows —
+   two separate per-row grids would each auto-size their own "auto" column
+   independently and could drift apart. Capped width keeps the two groups
+   from drifting far apart on very wide screens. */
+.controlsInner {
+  width: 100%;
+  max-width: 1560px;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 24px;
+  row-gap: 14px;
 
-  @media (max-width: 640px) {
-    /* Unwrap so row1/row2 become direct flex items of .controls, letting
-       the location control be re-ordered onto the duration row below. */
-    display: contents;
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr;
+    row-gap: 10px;
   }
 }
 
-/* Row 1: date buttons */
-.controlRow1 {
-  min-width: 0;
-  position: relative;
-
-  @media (max-width: 640px) {
-    order: 1;
-    flex: 1 1 100%;
-  }
-}
-
-/* Subtle right-edge fade to hint at horizontal overflow in the date row */
-@media (max-width: 640px) {
-  .controlRow1::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    width: 18px;
-    background: linear-gradient(to right, transparent, rgba(248, 250, 252, 0.8));
-    pointer-events: none;
-  }
-}
-
-/* Row 2: time filter + location button */
-.controlRow2 {
+.rowLeft {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-
-  @media (max-width: 640px) {
-    /* Unwrap so the time filter and location button become their own
-       direct flex items of .controls (see .timeFilterWrap/.locationWrap). */
-    display: contents;
-  }
-}
-
-/* Time-of-day filter: its own full-width row on mobile */
-.timeFilterWrap {
-  min-width: 0;
-
-  @media (max-width: 640px) {
-    order: 2;
-    flex: 1 1 100%;
-  }
-}
-
-/* Location button: pairs with Refresh on its own row on mobile, taking the
-   larger share since it's the primary filter toggle (Refresh is secondary). */
-.locationWrap {
-  @media (max-width: 640px) {
-    order: 3;
-    flex: 1.8;
-    min-width: 0;
-  }
-}
-
-/* Distance filter: only rendered once a location is known; its own
-   full-width row on mobile, left-aligned like everything else. */
-.distanceFilterWrap {
-  @media (max-width: 640px) {
-    order: 5;
-    flex: 1 1 100%;
-  }
-}
-
-/* Right column: duration toggle (top) + legend (bottom) */
-.controlsRight {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: space-between;
   gap: 10px;
-  margin-left: auto;
-  flex-shrink: 0;
-  align-self: stretch;
+  flex-wrap: wrap;
+  min-width: 0;
+  position: relative;
+}
+
+/* Subtle right-edge fade on the date row (always the first .rowLeft),
+   hinting at horizontal overflow there. */
+.rowLeft:first-child::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 18px;
+  background: linear-gradient(to right, transparent, var(--surface));
+  pointer-events: none;
 
   @media (max-width: 640px) {
-    /* Unwrap into .controls' own flex row so the duration toggle can
-       take its own slot below the controls while the legend hides. */
-    display: contents;
+    background: linear-gradient(to right, transparent, rgba(248, 250, 252, 0.8));
   }
 }
 
-.durationWrap {
-  @media (max-width: 640px) {
-    order: 6;
-    flex: 1 1 100%;
-    display: flex;
+.rowRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+
+  @media (max-width: 1100px) {
+    justify-content: flex-start;
   }
 }
 
 .legend {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-
-  @media (max-width: 640px) {
-    order: 7;
-    flex: 1 1 100%;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding-top: 0;
-  }
+  align-items: center;
+  gap: 8px;
 }
 
 .legendTitle {
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.05em;
   color: var(--text-muted);
-
-  @media (max-width: 640px) {
-    letter-spacing: 0.03em;
-  }
 }
 
 .legendItems {
@@ -302,15 +234,6 @@
   font-size: 13px;
   white-space: nowrap;
   transition: border-color 0.12s ease, background-color 0.12s ease, color 0.12s ease;
-
-  @media (max-width: 640px) {
-    order: 4;
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 }
 
 .refreshButton:hover:not(:disabled) {

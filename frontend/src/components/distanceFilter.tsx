@@ -13,7 +13,6 @@ const OPTIONS: { value: DistanceFilterValue; label: string }[] = [
 export default function DistanceFilter({ value, onChange }: Props) {
   return (
     <div className={styles.wrapper}>
-      <span className={styles.label}>Distance</span>
       <div className={styles.segment} role="group" aria-label="Distance filter">
         {OPTIONS.map(({ value: v, label }) => (
           <button

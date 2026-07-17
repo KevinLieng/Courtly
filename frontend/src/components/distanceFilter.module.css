@@ -10,17 +10,6 @@
   }
 }
 
-.label {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  white-space: nowrap;
-
-  @media (max-width: 640px) {
-    width: 66px;
-  }
-}
-
 .segment {
   display: flex;
   border: 1px solid var(--border);
