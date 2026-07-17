@@ -32,6 +32,7 @@ export type LocationAvailability = {
   mapsUrl: string;
   status: AvailabilityResponse["status"];
   slots: AvailabilityResponse["slots"];
+  timetableUrl?: string;
 };
 
 export type GetAvailabilityResponse = {
@@ -467,6 +468,7 @@ async function scrapeLocation(
         mapsUrl: location.mapsUrl,
         status: data.status,
         slots: data.slots,
+        timetableUrl: data.timetableUrl,
       };
     }
 

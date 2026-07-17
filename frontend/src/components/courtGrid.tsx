@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import LocationRow from "./locationRow";
 import type { Provider, Slot } from "../api/courtsApi";
 import { addMinutes, floorToHalfHour } from "../utils/availabilityWindows";
+import type { CourtModalData } from "./courtSelectionModal";
 import styles from "./courtGrid.module.css";
 import { VENUE_COL_WIDTH, TIME_COL_MIN_WIDTH } from "./gridConstants";
 
@@ -13,6 +14,7 @@ type LocationAvailability = {
   lat: number;
   lng: number;
   mapsUrl: string;
+  timetableUrl?: string;
   slots: Slot[];
 };
 
@@ -24,6 +26,7 @@ type Props = {
   // "All day" shows plain start-time labels (6 am, 6:30, 7, ...); the
   // morning/afternoon/evening filters show the full booking-window range.
   showRangeLabels: boolean;
+  onOpenCourtModal: (data: CourtModalData) => void;
 };
 
 type Period = "am" | "pm";
@@ -64,7 +67,7 @@ export function formatFullWindowLabel(startTime: string, durationMinutes: number
     : `${startLabel} ${startPeriod}–${endLabel} ${endPeriod}`;
 }
 
-export default function AvailabilityGrid({ date, times, locations, duration, showRangeLabels }: Props) {
+export default function AvailabilityGrid({ date, times, locations, duration, showRangeLabels, onOpenCourtModal }: Props) {
   const todayStr = new Date().toLocaleDateString("en-CA");
   const isToday = date === todayStr;
   const currentTimeIndex = isToday ? times.indexOf(floorToHalfHour(new Date())) : -1;
@@ -134,6 +137,7 @@ export default function AvailabilityGrid({ date, times, locations, duration, sho
               times={times}
               currentTimeIndex={currentTimeIndex}
               duration={duration}
+              onOpenCourtModal={onOpenCourtModal}
             />
           ))}
         </tbody>

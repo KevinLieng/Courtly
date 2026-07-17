@@ -3,6 +3,7 @@ import { computeAvailability, PROVIDER_CAPABILITIES } from "../utils/availabilit
 import { formatDistanceKm } from "../utils/distance";
 import { formatFullWindowLabel } from "./courtGrid";
 import AvailableSlotLink from "./availableSlotLink";
+import type { CourtModalData } from "./courtSelectionModal";
 import styles from "./locationRow.module.css";
 
 type LocationData = {
@@ -11,6 +12,7 @@ type LocationData = {
   provider: Provider;
   distance?: number;
   mapsUrl: string;
+  timetableUrl?: string;
   slots: Slot[];
 };
 
@@ -19,9 +21,10 @@ type Props = {
   times: string[];
   currentTimeIndex: number;
   duration: number;
+  onOpenCourtModal: (data: CourtModalData) => void;
 };
 
-export default function LocationRow({ location, times, currentTimeIndex, duration }: Props) {
+export default function LocationRow({ location, times, currentTimeIndex, duration, onOpenCourtModal }: Props) {
   const durationMinutes = duration * 60;
   const capabilities = PROVIDER_CAPABILITIES[location.provider];
   const availabilityByTime = computeAvailability(location.slots, times, durationMinutes, capabilities);
@@ -56,7 +59,19 @@ export default function LocationRow({ location, times, currentTimeIndex, duratio
           >
             {isAvailable ? (
               <AvailableSlotLink
-                href={availability.bookingUrl}
+                href={location.provider === "tennis-venues" ? undefined : availability.bookingUrl}
+                onClick={
+                  location.provider === "tennis-venues"
+                    ? () =>
+                        onOpenCourtModal({
+                          venueName: location.name,
+                          mapsUrl: location.mapsUrl,
+                          windowLabel,
+                          courts: availability.courts,
+                          timetableUrl: location.timetableUrl,
+                        })
+                    : undefined
+                }
                 className={`${styles.slotAvail} ${count >= 6 ? styles.slotHigh : count >= 3 ? styles.slotMid : styles.slotLow}`}
                 ariaLabel={`${location.name}, ${windowLabel}, ${count} court${count === 1 ? "" : "s"} available`}
                 count={count}
