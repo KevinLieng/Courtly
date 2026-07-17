@@ -8,6 +8,7 @@
   min-width: 0;
 
   @media (max-width: 640px) {
+    gap: 7px;
     padding-right: 8px;
   }
 }
@@ -33,6 +34,11 @@
   flex-shrink: 0;
   transition: border-color 0.12s ease, background-color 0.12s ease;
   position: relative;
+
+  @media (max-width: 640px) {
+    min-width: 62px;
+    padding: 5px 8px;
+  }
 }
 
 .day:hover:not(.daySelected) {
