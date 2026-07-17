@@ -3,7 +3,8 @@ import { createPortal } from "react-dom";
 import styles from "./availableSlotLink.module.css";
 
 type Props = {
-  href: string;
+  href?: string;
+  onClick?: () => void;
   className: string;
   ariaLabel: string;
   count: number;
@@ -25,8 +26,8 @@ const CELL_GAP = 9;
 const ESTIMATED_TOOLTIP_HEIGHT = 56;
 const ARROW_EDGE_MARGIN = 12;
 
-export default function AvailableSlotLink({ href, className, ariaLabel, count, windowLabel }: Props) {
-  const anchorRef = useRef<HTMLAnchorElement>(null);
+export default function AvailableSlotLink({ href, onClick, className, ariaLabel, count, windowLabel }: Props) {
+  const anchorRef = useRef<HTMLAnchorElement & HTMLButtonElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const cellRectRef = useRef<DOMRect | null>(null);
   const [pos, setPos] = useState<TooltipPosition | null>(null);
@@ -104,21 +105,40 @@ export default function AvailableSlotLink({ href, className, ariaLabel, count, w
 
   return (
     <>
-      <a
-        ref={anchorRef}
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={className}
-        aria-label={ariaLabel}
-        onMouseEnter={show}
-        onMouseLeave={hide}
-        onFocus={show}
-        onBlur={hide}
-        onClick={hide}
-      >
-        {count}
-      </a>
+      {onClick ? (
+        <button
+          type="button"
+          ref={anchorRef}
+          className={className}
+          aria-label={ariaLabel}
+          onMouseEnter={show}
+          onMouseLeave={hide}
+          onFocus={show}
+          onBlur={hide}
+          onClick={() => {
+            hide();
+            onClick();
+          }}
+        >
+          {count}
+        </button>
+      ) : (
+        <a
+          ref={anchorRef}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={className}
+          aria-label={ariaLabel}
+          onMouseEnter={show}
+          onMouseLeave={hide}
+          onFocus={show}
+          onBlur={hide}
+          onClick={hide}
+        >
+          {count}
+        </a>
+      )}
       {pos &&
         createPortal(
           <div

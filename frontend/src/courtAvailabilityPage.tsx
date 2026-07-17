@@ -12,6 +12,7 @@ import DurationToggle, { type Duration } from "./components/durationToggle";
 import SwipeHint from "./components/swipeHint";
 import { times as allTimes, LATEST_POSSIBLE_SLOT_TIME } from "./components/gridConstants";
 import { floorToHalfHour, toMinutes } from "./utils/availabilityWindows";
+import CourtSelectionModal, { type CourtModalData } from "./components/courtSelectionModal";
 import styles from "./courtAvailabilityPage.module.css";
 
 function timesInHourRange(times: string[], startHour: number, endHourExclusive: number) {
@@ -54,6 +55,7 @@ export default function CourtAvailability() {
   const [distanceFilter, setDistanceFilter] = useDistanceFilter();
   const [activePeriod, setActivePeriod] = useState<TimePeriod | null>(null);
   const [duration, setDuration] = useState<Duration>(1);
+  const [courtModalData, setCourtModalData] = useState<CourtModalData | null>(null);
 
   // Every half-hour column in the (time-of-day-filtered) grid is rendered
   // as a start time; whether a given window actually fits is decided by
@@ -205,10 +207,12 @@ export default function CourtAvailability() {
               locations={distanceFilteredLocations}
               duration={duration}
               showRangeLabels={activePeriod !== null}
+              onOpenCourtModal={setCourtModalData}
             />
           </>
         )}
       </div>
+      <CourtSelectionModal data={courtModalData} onClose={() => setCourtModalData(null)} />
     </div>
   );
 }

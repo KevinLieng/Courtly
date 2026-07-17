@@ -2,6 +2,7 @@ import axios from "axios";
 
 export type Slot = {
   court: number;
+  courtName?: string;
   time: string;
   available: boolean;
   bookingUrl: string;
@@ -21,6 +22,7 @@ export type LocationAvailability = {
   lat: number;
   lng: number;
   mapsUrl: string;
+  timetableUrl?: string;
 };
 
 export type UserLocation = {

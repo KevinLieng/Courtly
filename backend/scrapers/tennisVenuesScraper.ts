@@ -71,16 +71,15 @@ export async function tennisVenuesScraper(
 
   const $ = cheerio.load(response.data);
 
-  // Every slot links to the venue's own booking calendar for this date,
-  // not the per-slot deep link — matches the other scrapers' pattern of
-  // sending the user to the venue's page rather than a pre-filled request.
-  const bookingUrl = `${BASE_URL}/booking/${slug}/calendar?date=${compactDate}`;
+  // Fallback link for the modal's "open full timetable" option — separate
+  // from each slot's own direct bookingUrl below.
+  const timetableUrl = `${BASE_URL}/booking/${slug}/calendar?date=${compactDate}`;
 
-  const tennisCourtIndexes = new Set<number>();
+  const courtNamesByIndex = new Map<number, string>();
   $("th.v4-court-col").each((_, el) => {
     const index = Number($(el).attr("data-court-index"));
     const name = $(el).text().trim();
-    if (isTennisCourt(name)) tennisCourtIndexes.add(index);
+    if (isTennisCourt(name)) courtNamesByIndex.set(index, name);
   });
 
   const slots: AvailabilitySlot[] = [];
@@ -90,21 +89,26 @@ export async function tennisVenuesScraper(
     if (!href) return;
 
     const courtIndex = Number($(el).closest("td").attr("data-court-index"));
-    if (!tennisCourtIndexes.has(courtIndex)) return;
+    if (!courtNamesByIndex.has(courtIndex)) return;
 
     const match = href.match(/[?&]t=(\d{3,4})/);
     if (!match) return;
 
     slots.push({
       court: courtIndex,
+      courtName: courtNamesByIndex.get(courtIndex),
       time: toColonTime(match[1]),
       available: true,
-      bookingUrl,
+      // The real per-court, per-time deep link scraped from the source
+      // site (e.g. /booking/request?v=...&id=C1&d=...&t=1930&cm=true),
+      // not the generic calendar page — verified against live venues.
+      bookingUrl: href.startsWith("http") ? href : `${BASE_URL}${href}`,
     });
   });
 
   return {
     status: "ok",
     slots,
+    timetableUrl,
   };
 }

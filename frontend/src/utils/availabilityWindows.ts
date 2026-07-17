@@ -1,6 +1,8 @@
 import type { Provider, Slot } from "../api/courtsApi";
 
-export type SlotWindow = { count: number; bookingUrl: string };
+export type CourtOption = { court: number; name?: string; bookingUrl: string };
+
+export type SlotWindow = { count: number; bookingUrl: string; courts: CourtOption[] };
 
 export type ProviderCapabilities = {
   baseSlotMinutes: 30 | 60;
@@ -33,16 +35,18 @@ export function floorToHalfHour(date: Date): string {
   return `${String(date.getHours()).padStart(2, "0")}:${minuteBucket}`;
 }
 
+type CourtInfo = { bookingUrl: string; name?: string };
+
 export function getAvailableCourtsForWindow(
-  courtsByTime: Map<string, Map<number, string>>,
+  courtsByTime: Map<string, Map<number, CourtInfo>>,
   startTime: string,
   durationMinutes: number,
   baseSlotMinutes: 30 | 60
-): Map<number, string> {
+): Map<number, CourtInfo> {
   if (durationMinutes % baseSlotMinutes !== 0) return new Map();
 
   const checkpoints = durationMinutes / baseSlotMinutes;
-  let result: Map<number, string> | undefined;
+  let result: Map<number, CourtInfo> | undefined;
 
   for (let i = 0; i < checkpoints; i++) {
     const courts = courtsByTime.get(addMinutes(startTime, i * baseSlotMinutes));
@@ -67,11 +71,11 @@ export function computeAvailability(
   durationMinutes: number,
   capabilities: ProviderCapabilities
 ): Record<string, SlotWindow> {
-  const courtsByTime = new Map<string, Map<number, string>>();
+  const courtsByTime = new Map<string, Map<number, CourtInfo>>();
   for (const slot of slots) {
     if (!slot.available) continue;
     if (!courtsByTime.has(slot.time)) courtsByTime.set(slot.time, new Map());
-    courtsByTime.get(slot.time)!.set(slot.court, slot.bookingUrl);
+    courtsByTime.get(slot.time)!.set(slot.court, { bookingUrl: slot.bookingUrl, name: slot.courtName });
   }
 
   const result: Record<string, SlotWindow> = {};
@@ -89,8 +93,13 @@ export function computeAvailability(
     if (!courts.size) continue;
 
     let url = "";
-    for (const u of courts.values()) { url = u; break; }
-    result[time] = { count: courts.size, bookingUrl: url };
+    for (const c of courts.values()) { url = c.bookingUrl; break; }
+    const courtOptions: CourtOption[] = Array.from(courts.entries()).map(([court, info]) => ({
+      court,
+      name: info.name,
+      bookingUrl: info.bookingUrl,
+    }));
+    result[time] = { count: courts.size, bookingUrl: url, courts: courtOptions };
   }
 
   return result;
