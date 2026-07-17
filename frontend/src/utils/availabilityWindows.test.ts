@@ -13,12 +13,12 @@ function slot(court: number, time: string, available = true, bookingUrl = `url-$
   return { court, time, available, bookingUrl };
 }
 
-function toCourtsByTime(slots: Slot[]): Map<string, Map<number, string>> {
-  const map = new Map<string, Map<number, string>>();
+function toCourtsByTime(slots: Slot[]): Map<string, Map<number, { bookingUrl: string; name?: string }>> {
+  const map = new Map<string, Map<number, { bookingUrl: string; name?: string }>>();
   for (const s of slots) {
     if (!s.available) continue;
     if (!map.has(s.time)) map.set(s.time, new Map());
-    map.get(s.time)!.set(s.court, s.bookingUrl);
+    map.get(s.time)!.set(s.court, { bookingUrl: s.bookingUrl, name: s.courtName });
   }
   return map;
 }
