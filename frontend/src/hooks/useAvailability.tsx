@@ -16,6 +16,11 @@ export type AvailabilityStatus =
   | "invalid-date"
   | "error";
 
+// A cache hit resolves near-instantly, which reads as a jarring flash
+// rather than a "load." A live scrape already takes well over this, so
+// it never gets slowed down — this only tops up genuinely fast responses.
+const MIN_LOADING_MS = 500;
+
 export function useAvailability(
   date: string,
   userLocation: UserLocation | null = null
@@ -28,13 +33,22 @@ export function useAvailability(
     if (!date) return;
 
     let cancelled = false;
+    const startedAt = performance.now();
+
+    async function padToMinimum() {
+      const elapsed = performance.now() - startedAt;
+      if (elapsed < MIN_LOADING_MS) {
+        await new Promise((resolve) => setTimeout(resolve, MIN_LOADING_MS - elapsed));
+      }
+    }
 
     setLocations([]);
     setStatus("loading");
 
-    const timer = setTimeout(async () => {
+    (async () => {
       try {
         const data = await getAvailability(date, userLocation);
+        await padToMinimum();
 
         if (cancelled) return;
 
@@ -57,17 +71,17 @@ export function useAvailability(
         }
       } catch (err) {
         console.error("Failed to get availability:", err);
+        await padToMinimum();
 
         if (!cancelled) {
           setLocations([]);
           setStatus("error");
         }
       }
-    }, 1000);
+    })();
 
     return () => {
       cancelled = true;
-      clearTimeout(timer);
     };
   }, [date, userLocation, retryCount]);
 
