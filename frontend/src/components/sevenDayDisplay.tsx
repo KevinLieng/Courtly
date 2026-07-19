@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { useState } from "react";
+import CalendarModal from "./calendarModal";
 import styles from "./sevenDayDisplay.module.css";
 
 type Props = {
@@ -16,7 +17,7 @@ function getLocalDateString(date = new Date()) {
 }
 
 export default function SevenDayDisplay({ date, setDate, minDate, maxDate }: Props) {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const todayValue = getLocalDateString();
 
   const nextSevenDays = Array.from({ length: 7 }, (_, i) => {
@@ -62,52 +63,50 @@ export default function SevenDayDisplay({ date, setDate, minDate, maxDate }: Pro
         );
       })}
 
-      {/* Calendar / far-date button — wrapper gives the hidden input a positioned anchor */}
-      <div className={styles.calendarWrapper}>
-        <button
-          type="button"
-          onClick={() => inputRef.current?.showPicker()}
-          className={[
-            styles.day,
-            styles.dayCalendar,
-            !isInSevenDays ? styles.daySelected : "",
-          ].join(" ")}
-          aria-label="Open calendar to pick a date"
-        >
-          {!isInSevenDays ? (
-            <>
-              <span className={styles.dayTop}>{farTopLine}</span>
-              <span className={styles.dayBottom}>{farBottomLine}</span>
-            </>
-          ) : (
-            <>
-              <svg
-                className={styles.calIcon}
-                viewBox="0 0 16 16"
-                fill="none"
-                aria-hidden="true"
-              >
-                <rect x="1" y="2.5" width="14" height="12.5" rx="2" stroke="currentColor" strokeWidth="1.25" />
-                <line x1="1" y1="6.5" x2="15" y2="6.5" stroke="currentColor" strokeWidth="1.25" />
-                <line x1="5" y1="1" x2="5" y2="4" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
-                <line x1="11" y1="1" x2="11" y2="4" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
-              </svg>
-              <span className={styles.dayBottom}>Calendar</span>
-            </>
-          )}
-        </button>
-        <input
-          ref={inputRef}
-          type="date"
-          value={date}
-          min={minDate}
-          max={maxDate}
-          onChange={(e) => e.target.value && setDate(e.target.value)}
-          className={styles.hiddenInput}
-          tabIndex={-1}
-          aria-hidden="true"
-        />
-      </div>
+      <button
+        type="button"
+        onClick={() => setCalendarOpen(true)}
+        className={[
+          styles.day,
+          styles.dayCalendar,
+          !isInSevenDays ? styles.daySelected : "",
+        ].join(" ")}
+        aria-label="Open calendar to pick a date"
+      >
+        {!isInSevenDays ? (
+          <>
+            <span className={styles.dayTop}>{farTopLine}</span>
+            <span className={styles.dayBottom}>{farBottomLine}</span>
+          </>
+        ) : (
+          <>
+            <svg
+              className={styles.calIcon}
+              viewBox="0 0 16 16"
+              fill="none"
+              aria-hidden="true"
+            >
+              <rect x="1" y="2.5" width="14" height="12.5" rx="2" stroke="currentColor" strokeWidth="1.25" />
+              <line x1="1" y1="6.5" x2="15" y2="6.5" stroke="currentColor" strokeWidth="1.25" />
+              <line x1="5" y1="1" x2="5" y2="4" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
+              <line x1="11" y1="1" x2="11" y2="4" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
+            </svg>
+            <span className={styles.dayBottom}>Calendar</span>
+          </>
+        )}
+      </button>
+
+      <CalendarModal
+        open={calendarOpen}
+        value={date}
+        minDate={minDate}
+        maxDate={maxDate}
+        onSelect={(d) => {
+          setDate(d);
+          setCalendarOpen(false);
+        }}
+        onClose={() => setCalendarOpen(false)}
+      />
     </div>
   );
 }
