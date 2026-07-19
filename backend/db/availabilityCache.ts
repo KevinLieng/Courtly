@@ -1,3 +1,4 @@
+import { waitUntil } from "@vercel/functions";
 import { pool } from "./pool";
 import {
   scrapeAllLocations,
@@ -81,14 +82,27 @@ async function getRawAvailability(date: string): Promise<LocationAvailability[]>
 
   const claimed = await tryClaim(date);
   if (claimed) {
+    let scraped: LocationAvailability[];
     try {
-      const scraped = await scrapeAllLocations(date);
-      await saveResult(date, scraped);
-      return scraped;
+      scraped = await scrapeAllLocations(date);
     } catch (err) {
       await releaseLock(date);
       throw err;
     }
+
+    // Don't make the client wait on this write too — return what we have
+    // and let it land in the background. waitUntil keeps the function
+    // instance alive until it settles (unlike a bare unawaited promise,
+    // which Vercel doesn't guarantee survives past the response). If it
+    // never completes for some reason, the 60s lock-timeout above still
+    // recovers the row on the next request.
+    waitUntil(
+      saveResult(date, scraped).catch((err) => {
+        console.error(`Background cache save failed for ${date}:`, err);
+      })
+    );
+
+    return scraped;
   }
 
   const deadline = Date.now() + MAX_POLL_MS;
