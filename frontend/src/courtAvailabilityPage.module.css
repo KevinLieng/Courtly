@@ -30,10 +30,6 @@
 
   @media (max-width: 640px) {
     padding: 12px;
-    margin: 10px;
-    background: var(--surface-subtle);
-    border-radius: 12px;
-    border-bottom: none;
   }
 }
 
@@ -79,10 +75,6 @@
   width: 18px;
   background: linear-gradient(to right, transparent, var(--surface));
   pointer-events: none;
-
-  @media (max-width: 640px) {
-    background: linear-gradient(to right, transparent, rgba(248, 250, 252, 0.8));
-  }
 }
 
 .rowRight {
@@ -170,6 +162,14 @@
   color: var(--text-secondary);
 }
 
+.summaryRight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
 .summaryHint {
   font-size: 11px;
   color: var(--text-muted);
@@ -222,31 +222,42 @@
 }
 
 .refreshButton {
-  height: 36px;
-  padding: 0 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: none;
+  background: transparent;
   cursor: pointer;
-  background: var(--surface);
-  color: var(--text-secondary);
+  color: var(--avail-mid);
   font: inherit;
-  font-weight: 500;
-  font-size: 13px;
+  font-weight: 600;
+  font-size: 12px;
   white-space: nowrap;
-  transition: border-color 0.12s ease, background-color 0.12s ease, color 0.12s ease;
+  transition: color 0.12s ease;
 }
 
 .refreshButton:hover:not(:disabled) {
-  border-color: var(--border-strong);
-  color: var(--text-primary);
-  background: var(--surface-subtle);
-}
-
-.refreshButton:active:not(:disabled) {
-  background: var(--surface-subtle);
+  color: var(--avail-high);
 }
 
 .refreshButton:disabled {
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.6;
+}
+
+.refreshIcon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.refreshIconSpinning {
+  animation: refreshSpin 0.8s linear infinite;
+}
+
+@keyframes refreshSpin {
+  to {
+    transform: rotate(360deg);
+  }
 }

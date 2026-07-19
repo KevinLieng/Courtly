@@ -76,7 +76,7 @@ export default function CourtAvailability() {
   const cutoffMinutes = toMinutes(LATEST_POSSIBLE_SLOT_TIME) - duration * 60 + 30;
   const filteredTimes = dateFilteredTimes.filter((t) => toMinutes(t) <= cutoffMinutes);
 
-  const { locations, loading, invalidDate, error, status, retry, refresh } = useAvailability(date, userLocation);
+  const { locations, loading, invalidDate, error, status, retry, refresh, failedCount } = useAvailability(date, userLocation);
 
   const loaded = status !== "idle" && status !== "loading";
 
@@ -123,14 +123,6 @@ export default function CourtAvailability() {
               {userLocation && (
                 <DistanceFilter value={distanceFilter} onChange={setDistanceFilter} />
               )}
-              <button
-                type="button"
-                className={styles.refreshButton}
-                onClick={refresh}
-                disabled={loading}
-              >
-                {loading ? "Refreshing…" : "Refresh"}
-              </button>
             </div>
             <div className={styles.rowRight}>
               <div className={styles.legend} aria-label="Availability legend">
@@ -194,8 +186,43 @@ export default function CourtAvailability() {
                   {distanceFilteredLocations.length} {distanceFilteredLocations.length === 1 ? "venue" : "venues"} available
                 </span>
                 <span className={styles.summaryDate}>{formatSummaryDate(date)}</span>
+                {failedCount > 0 && (
+                  <span className={styles.summaryDate}>
+                    {failedCount} venue{failedCount === 1 ? "" : "s"} unavailable right now
+                  </span>
+                )}
               </div>
-              <span className={styles.summaryHint}>Numbers = courts. Tap to book.</span>
+              <div className={styles.summaryRight}>
+                <span className={styles.summaryHint}>Numbers = courts. Tap to book.</span>
+                <button
+                  type="button"
+                  className={styles.refreshButton}
+                  onClick={refresh}
+                  disabled={loading}
+                >
+                  <svg
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    aria-hidden="true"
+                    className={`${styles.refreshIcon} ${loading ? styles.refreshIconSpinning : ""}`}
+                  >
+                    <path
+                      d="M13 8A5 5 0 1 1 8.4 3.06"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M8.4 1.2 11.5 3.2 8.9 5.6"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  {loading ? "Refreshing…" : "Refresh"}
+                </button>
+              </div>
             </div>
             <SwipeHint />
             <AvailabilityGrid
