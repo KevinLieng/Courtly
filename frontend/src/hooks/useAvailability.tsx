@@ -28,6 +28,7 @@ export function useAvailability(
   const [locations, setLocations] = useState<LocationAvailability[]>([]);
   const [status, setStatus] = useState<AvailabilityStatus>("idle");
   const [retryCount, setRetryCount] = useState(0);
+  const [failedCount, setFailedCount] = useState(0);
 
   useEffect(() => {
     if (!date) return;
@@ -53,18 +54,22 @@ export function useAvailability(
         if (cancelled) return;
 
         setLocations(data.locations);
+        setFailedCount(data.locations.filter((location) => location.status === "error").length);
 
-        const hasError = data.locations.some(
-          (location) => location.status === "error"
-        );
+        // A single flaky venue (no per-scraper timeout, occasional network
+        // hiccup) shouldn't block the venues that DID load — only treat
+        // this as a page-level problem when NOTHING useful came back.
+        const noData = data.locations.length === 0;
+        const allInvalidDate =
+          data.locations.length > 0 &&
+          data.locations.every((location) => location.status === "invalid-date");
+        const allErrored =
+          data.locations.length > 0 &&
+          data.locations.every((location) => location.status === "error");
 
-        const hasInvalidDate = data.locations.some(
-          (location) => location.status === "invalid-date"
-        );
-
-        if (hasInvalidDate) {
+        if (allInvalidDate) {
           setStatus("invalid-date");
-        } else if (hasError) {
+        } else if (allErrored || noData) {
           setStatus("error");
         } else {
           setStatus("ok");
@@ -75,6 +80,7 @@ export function useAvailability(
 
         if (!cancelled) {
           setLocations([]);
+          setFailedCount(0);
           setStatus("error");
         }
       }
@@ -91,6 +97,7 @@ export function useAvailability(
     invalidDate: status === "invalid-date",
     error: status === "error",
     status,
+    failedCount,
     retry: () => setRetryCount((count) => count + 1),
     // Same underlying re-fetch as retry — the backend decides whether this
     // actually re-scrapes (data >15min old) or just re-serves the cache.
